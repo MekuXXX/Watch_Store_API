@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1725030326031,
+      "tag": "0000_lean_pandemic",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1725030461217,
+      "tag": "0001_open_triathlon",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1725057277944,
+      "tag": "0002_new_puff_adder",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1725057515832,
+      "tag": "0003_far_wasp",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1725061781559,
+      "tag": "0004_mature_mongoose",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1725238590438,
+      "tag": "0005_cynical_risque",
+      "breakpoints": true
+    }
+  ]
+}

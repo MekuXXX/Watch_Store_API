@@ -1,0 +1,33 @@
+version: '3'
+services:
+  # app:
+  #   container_name: backend_app
+  #   build:
+  #     context: '.'
+  #   ports:
+  #     - 5000:5000
+  #   depends_on:
+  #     - db
+  #     - redis
+  #     - adminer
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  redis:
+    image: 'redis:alpine'
+    volumes:
+      - ./storage/redis:/data
+    ports:
+      - '6379:6379'

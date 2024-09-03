@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "test",
+    "react-emails",
+    "dist",
+    "**/*spec.ts",
+    "drizzle.config.ts",
+    "storage",
+    "Dockerfile",
+    "docker-compose*.yml"
+  ]
+}
