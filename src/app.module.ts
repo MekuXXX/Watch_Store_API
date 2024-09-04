@@ -11,9 +11,15 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { DbModule } from './db/db.module';
 import { RolesGuard } from './guards/role';
 import env from './utils/env';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'static/swagger'),
+      serveRoot: `/${env.SWAGGER_ROUTE}`,
+    }),
     ThrottlerModule.forRoot([
       {
         ttl: env.MAX_THROTTLER_TIME,

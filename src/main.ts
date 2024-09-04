@@ -4,6 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './filters/HttpExceptionFilter';
 import helmet from 'helmet';
+import env from './utils/env';
+import { getSwaggerFiles } from './utils/getSwaggerFiles';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,23 +22,15 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document, {
-    customSiteTitle: 'Backend Generator',
-    customfavIcon: 'https://avatars.githubusercontent.com/u/6936373?s=200&v=4',
-    customJs: [
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js',
-    ],
-    customCssUrl: [
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.css',
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.css',
-    ],
-  });
+  SwaggerModule.setup(env.SWAGGER_ROUTE, app, document);
 
   app.enableCors();
   app.use(helmet());
 
   await app.listen(process.env.PORT || 5000);
+
+  if (env.NODE_ENV === 'development') {
+    getSwaggerFiles();
+  }
 }
 bootstrap();

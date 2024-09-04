@@ -9,7 +9,7 @@ import env from 'src/utils/env';
 @Module({
   imports: [
     JwtModule.register({
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: env.JWT_EXPIRATION_TIME },
       secret: env.JWT_SECRET,
     }),
     PassportModule,

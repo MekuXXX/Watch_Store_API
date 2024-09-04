@@ -146,8 +146,8 @@ export class AuthService {
 
       await this.mailer.sendMail({
         recipients: [{ name: data.user.username, address: data.user.email }],
-        subject: 'Veri',
-        html: `<h1>Forget password: <a href="${env.APP_CLIENT_URL}/forget-password?token=${data.activateToken.token}">Click Here</a></h1>`,
+        subject: 'Verify Watch Store Account',
+        html: `<h1>Verify email: <a href="${env.APP_CLIENT_URL}/verify-email/${data.activateToken.token}">Click here</a></h1>`,
       });
 
       throw new BadRequestException('Token is expired, We have sent a new one');

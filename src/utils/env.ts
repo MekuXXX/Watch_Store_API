@@ -31,6 +31,10 @@ const stringNumber = z
 
 const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'production']).default('development'),
+  SERVER_URL: z.string(),
+
+  // Swagger
+  SWAGGER_ROUTE: z.string(),
 
   // App
   APP_NAME: z.string(),
@@ -49,6 +53,7 @@ const EnvSchema = z.object({
 
   // JWT
   JWT_SECRET: z.string(),
+  JWT_EXPIRATION_TIME: z.string(),
 
   // Cache & Throttling
   MAX_CACHE_TIME: stringNumber,
