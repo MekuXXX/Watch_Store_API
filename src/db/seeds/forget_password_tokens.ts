@@ -14,7 +14,7 @@ export default async function seed(db: DrizzleDB) {
     const forgetTokens = await Promise.all(
       userIds.map(userId => ({
         user_id: userId.id,
-        expiration_date: moment().add(env.FORTGET_PASSWORD_TOKENS_EXPIRATION, "milliseconds").toDate(),
+        expiration_date: moment().add(env.FORGET_PASSWORD_TOKENS_EXPIRATION, "milliseconds").toDate(),
         is_used: Math.random() > 0.5
       }))
     );

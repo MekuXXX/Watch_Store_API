@@ -9,6 +9,8 @@
     "drizzle.config.ts",
     "storage",
     "Dockerfile",
-    "docker-compose*.yml"
+    "docker-compose*.yml",
+    "**/seed.ts",
+    "**/migrate.ts"
   ]
 }

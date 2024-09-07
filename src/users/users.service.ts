@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { DrizzleDB } from 'src/db/drizzle';
@@ -11,7 +11,7 @@ export class UsersService {
   constructor(
     @Inject(DRIZZLE) private db: DrizzleDB,
     private authService: AuthService,
-  ) {}
+  ) { }
 
   async current(user: User) {
     const { id, username, email, avatar_url } = user;
@@ -42,7 +42,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new BadRequestException('User is not exist');
+      throw new NotFoundException('User is not exist');
     }
 
     return {
@@ -85,6 +85,10 @@ export class UsersService {
         avatar_url: users.avatar_url,
       });
 
+    if (!updatedUser) {
+      throw new NotFoundException("User is not exit")
+    }
+
     return {
       success: true,
       message: 'User has been updated successfully',
@@ -93,14 +97,13 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    // const user = await this.prisma.user.findUnique({ where: { id } });
     const user = await this.db
       .delete(users)
       .where(eq(users.id, id))
       .returning();
 
     if (!user) {
-      throw new BadRequestException('User is not exist');
+      throw new NotFoundException('User is not exist');
     }
   }
 }

@@ -1,7 +1,7 @@
-import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import config from 'drizzle.config';
 import { db, pool } from './db';
 import env from 'src/utils/env';
+import { migrate } from 'drizzle-orm/node-postgres/migrator'
 
 if (!env.DB_MIGRATING) {
   throw new Error(

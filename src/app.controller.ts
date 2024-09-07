@@ -1,7 +1,8 @@
 import { Controller, Get, HttpStatus } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('')
+@ApiTags("Welcome")
 export class AppController {
   @ApiResponse({
     status: HttpStatus.OK,

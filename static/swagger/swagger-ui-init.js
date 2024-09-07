@@ -29,7 +29,10 @@ window.onload = function() {
                 }
               }
             }
-          }
+          },
+          "tags": [
+            "Welcome"
+          ]
         }
       },
       "/api/auth/signup": {
@@ -59,8 +62,33 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "400": {
+              "description": "The email user tried to create is already exist",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Email is already exists"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "User not created after hitting the database with the query",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Error happen during creating the user"
+                  }
+                }
+              }
             }
-          }
+          },
+          "tags": [
+            "Authentication"
+          ]
         }
       },
       "/api/auth/signin": {
@@ -99,8 +127,55 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "400": {
+              "description": "User entered wrong credentials email or password",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Email or Password is not correct"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "User must activate his account before try to signin",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Activate the account to login"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "The email user trying to signin is not exist",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Email is not exist"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Error happen that access token for user not created",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "succes": false,
+                    "message": "Error happend during create user session"
+                  }
+                }
+              }
             }
-          }
+          },
+          "tags": [
+            "Authentication"
+          ]
         }
       },
       "/api/auth/verify-email/{token}": {
@@ -138,8 +213,33 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "400": {
+              "description": "Verifying token is not exist",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "The token is not exist"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Error happen during update the user",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Error happened during verifying the user"
+                  }
+                }
+              }
             }
-          }
+          },
+          "tags": [
+            "Authentication"
+          ]
         }
       },
       "/api/auth/forget-password": {
@@ -169,14 +269,48 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "404": {
+              "description": "The email user trying to change the password for is not exist",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Email is not exist"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Error happend during creating the user forget password token",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Error happend during in forget password"
+                  }
+                }
+              }
             }
-          }
+          },
+          "tags": [
+            "Authentication"
+          ]
         }
       },
-      "/api/auth/reset-password": {
+      "/api/auth/reset-password/{token}": {
         "post": {
           "operationId": "AuthController_resetPassword",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "token",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
           "requestBody": {
             "required": true,
             "content": {
@@ -195,13 +329,80 @@ window.onload = function() {
                   "schema": {
                     "example": {
                       "success": true,
-                      "message": "Password has been reseted successfully"
+                      "message": "Reset mail has sent successfully"
                     }
                   }
                 }
               }
+            },
+            "400": {
+              "description": "The user entered password different from the confirm password",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "status": false,
+                    "message": "Password must be the same as reset password"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "The user didn't update correctly",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Error during updating the user"
+                  }
+                }
+              }
             }
-          }
+          },
+          "tags": [
+            "Authentication"
+          ]
+        }
+      },
+      "/api/auth/validate-reset/{token}": {
+        "get": {
+          "operationId": "AuthController_validateResetToken",
+          "parameters": [
+            {
+              "name": "token",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The token is valid to be used by the user to reset the password",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": true,
+                    "message": "Token is valid to be used"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "The token that user user is not exist",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "status": false,
+                    "message": "Token is not exist"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Authentication"
+          ]
         }
       },
       "/api/users/current": {
@@ -213,24 +414,36 @@ window.onload = function() {
               "description": "Get the current user data",
               "content": {
                 "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": true,
-                      "message": "User has been obtained successfully",
-                      "data": {
-                        "userData": {
-                          "id": "custan313128149nisc81",
-                          "username": "John Doe",
-                          "email": "example@example.com",
-                          "avatar_url": "https://image_url.com"
-                        }
+                  "example": {
+                    "success": true,
+                    "message": "User has been obtained successfully",
+                    "data": {
+                      "userData": {
+                        "id": "custan313128149nisc81",
+                        "username": "John Doe",
+                        "email": "example@example.com",
+                        "avatar_url": "https://image_url.com"
                       }
                     }
                   }
                 }
               }
+            },
+            "401": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "status": false,
+                    "message": "Unauthorized"
+                  }
+                }
+              }
             }
-          }
+          },
+          "tags": [
+            "Users"
+          ]
         },
         "patch": {
           "operationId": "UsersController_updateCurrent",
@@ -266,8 +479,33 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "400": {
+              "description": "Can't found any data to update user with it",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Must provide a data to update the user"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Can't found the user in the Database",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "User is not exist"
+                  }
+                }
+              }
             }
-          }
+          },
+          "tags": [
+            "Users"
+          ]
         },
         "delete": {
           "operationId": "UsersController_remove",
@@ -276,7 +514,10 @@ window.onload = function() {
             "204": {
               "description": "Delete the user account"
             }
-          }
+          },
+          "tags": [
+            "Users"
+          ]
         }
       },
       "/api/users/{id}": {
@@ -313,8 +554,33 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "401": {
+              "description": "Normal user can't hit this route to get any user data",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Unauthorized"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Can't found the user in the Database",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "User is not exist"
+                  }
+                }
+              }
             }
-          }
+          },
+          "tags": [
+            "Users"
+          ]
         },
         "patch": {
           "operationId": "UsersController_updateAdmin",
@@ -359,8 +625,44 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "400": {
+              "description": "Can't found any data to update user with it",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Must provide a data to update the user"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Normal user can't hit this route to update any user",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Unauthorized"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Can't found the user in the Database",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "User is not exist"
+                  }
+                }
+              }
             }
-          }
+          },
+          "tags": [
+            "Users"
+          ]
         },
         "delete": {
           "operationId": "UsersController_removeAdmin",
@@ -377,8 +679,33 @@ window.onload = function() {
           "responses": {
             "204": {
               "description": "Delete any user account by the admin"
+            },
+            "401": {
+              "description": "Normal user can't hit this route to delete any user",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Unauthorized"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Can't found the user in the Database",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "User is not exist"
+                  }
+                }
+              }
             }
-          }
+          },
+          "tags": [
+            "Users"
+          ]
         }
       }
     },
@@ -453,10 +780,6 @@ window.onload = function() {
         "ResetPasswordDTO": {
           "type": "object",
           "properties": {
-            "token": {
-              "type": "string",
-              "example": "cutsze390284envr0x9023"
-            },
             "password": {
               "type": "string",
               "example": "This is very secret"
@@ -467,7 +790,6 @@ window.onload = function() {
             }
           },
           "required": [
-            "token",
             "password",
             "confirmPassword"
           ]

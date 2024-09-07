@@ -1,9 +1,11 @@
 import {
   BadGatewayException,
   BadRequestException,
-  ForbiddenException,
   Injectable,
   Inject,
+  UnauthorizedException,
+  InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDTO } from './dto/createUser.dto';
 import { SignInUserDTO } from './dto/signInUser.dto';
@@ -16,8 +18,8 @@ import * as moment from 'moment';
 import {
   ActivateToken,
   User,
+  UserRole,
   activate_tokens,
-  activate_tokens_rel,
   forget_password_tokens,
   users,
 } from 'src/db/schema';
@@ -58,7 +60,7 @@ export class AuthService {
     )[0];
 
     if (!user) {
-      throw new ForbiddenException();
+      throw new InternalServerErrorException("Error happen during creating the user");
     }
 
     const token = (
@@ -90,11 +92,11 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('Email is not exist');
+      throw new NotFoundException('Email is not exist');
     }
 
     if (!user.is_active) {
-      throw new BadRequestException('Activate the account to login');
+      throw new UnauthorizedException('Activate the account to login');
     }
 
     const isMatch = await this.comparePassword(password, user.password);
@@ -103,10 +105,10 @@ export class AuthService {
       throw new BadRequestException('Email or Password is not correct');
     }
 
-    const token = await this.createToken({ id: user.id });
+    const token = await this.createToken({ id: user.id, role: user.role });
 
     if (!token) {
-      throw new ForbiddenException();
+      throw new InternalServerErrorException("Error during creating user session");
     }
 
     return {
@@ -173,8 +175,13 @@ export class AuthService {
           username: users.username,
           email: users.email,
           avatar_url: users.avatar_url,
+          role: users.role,
         })
     )[0];
+
+    if (!user) {
+      throw new InternalServerErrorException("Error happened during verifying the user")
+    }
 
     await this.db
       .update(activate_tokens)
@@ -197,7 +204,14 @@ export class AuthService {
         ),
       );
 
-    const jwtToken = await this.createToken({ id: user.id });
+    const jwtToken = await this.createToken({
+      id: user.id,
+      role: user.role
+    });
+
+    if (!jwtToken) {
+      throw new InternalServerErrorException('Error happend during create user session')
+    }
 
     return {
       success: true,
@@ -215,7 +229,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadGatewayException('Email is not exist');
+      throw new NotFoundException('Email is not exist');
     }
 
     const forgetToken = (
@@ -223,10 +237,14 @@ export class AuthService {
         .insert(forget_password_tokens)
         .values({
           user_id: user.id,
-          expiration_date: moment().add(env.FORTGET_PASSWORD_TOKENS_EXPIRATION, 'milliseconds').toDate(),
+          expiration_date: moment().add(env.FORGET_PASSWORD_TOKENS_EXPIRATION, 'milliseconds').toDate(),
         })
         .returning()
     )[0];
+
+    if (!forgetToken) {
+      throw new InternalServerErrorException("Error happend during in forget password")
+    }
 
     await this.mailer.sendMail({
       recipients: [{ name: user.username, address: user.email }],
@@ -237,8 +255,8 @@ export class AuthService {
     return { success: true, message: 'Reset mail has sent successfully' };
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDTO) {
-    const { token, password, confirmPassword } = resetPasswordDto;
+  async resetPassword(token: string, resetPasswordDto: ResetPasswordDTO) {
+    const { password, confirmPassword } = resetPasswordDto;
 
     if (password !== confirmPassword) {
       throw new BadRequestException(
@@ -259,7 +277,7 @@ export class AuthService {
         .insert(forget_password_tokens)
         .values({
           user_id: dbToken.id,
-          expiration_date: moment().add(env.FORTGET_PASSWORD_TOKENS_EXPIRATION, 'milliseconds').toDate(),
+          expiration_date: moment().add(env.FORGET_PASSWORD_TOKENS_EXPIRATION, 'milliseconds').toDate(),
         }).returning({
           tokenId: forget_password_tokens.id
         }))[0];
@@ -299,6 +317,10 @@ export class AuthService {
         })
     )[0];
 
+    if (!user) {
+      throw new InternalServerErrorException("Error during updating the user");
+    }
+
     await this.db
       .update(forget_password_tokens)
       .set({
@@ -323,6 +345,22 @@ export class AuthService {
     return { success: true, message: 'Password has been reseted successfully' };
   }
 
+  async validateResetToken(token: string) {
+    const dbToken = await this.db.query.forget_password_tokens.findFirst({
+      where: (dbToken, { eq }) => eq(dbToken.token, token)
+    });
+
+    if (!dbToken) {
+      throw new BadRequestException("Token is not exist");
+    }
+
+    if (dbToken.is_used) {
+      throw new BadRequestException("Token is expired");
+    }
+
+    return { success: true, message: "Token is valid to be used" };
+  }
+
   async hashPassword(password: string) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -333,10 +371,7 @@ export class AuthService {
     return await bcrypt.compare(password, hashedPassword);
   }
 
-  async createToken(args: { id: string }) {
-    const { id } = args;
-    const payload = { id };
-
+  async createToken(payload: { id: string, role: UserRole }) {
     return await this.jwt.signAsync(payload, {
       secret: env.JWT_SECRET,
     });
