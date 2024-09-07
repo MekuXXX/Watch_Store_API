@@ -1,7 +1,5 @@
 import { defineConfig } from 'drizzle-kit';
-import env from 'src/utils/env';
-
-console.log(process.env.DATABASE_URL);
+import env from "./src/utils/env";
 
 export default defineConfig({
   dialect: 'postgresql',
@@ -10,6 +8,6 @@ export default defineConfig({
   verbose: true,
   strict: true,
   dbCredentials: {
-    url: env.DATABASE_URL,
+    url: env.DB_URL,
   },
 });

@@ -17,6 +17,7 @@ import {
   ActivateToken,
   User,
   activate_tokens,
+  activate_tokens_rel,
   forget_password_tokens,
   users,
 } from 'src/db/schema';
@@ -31,7 +32,7 @@ export class AuthService {
     @Inject(DRIZZLE) private db: DrizzleDB,
     private jwt: JwtService,
     private mailer: MailerService,
-  ) {}
+  ) { }
 
   async signup(userDto: CreateUserDTO) {
     const { username, email, password } = userDto;
@@ -65,7 +66,7 @@ export class AuthService {
         .insert(activate_tokens)
         .values({
           user_id: user.id,
-          expiration_date: moment().add(5, 'minutes').toDate(),
+          expiration_date: moment().add(env.ACTIVATE_TOKENS_EXPIRATION, 'milliseconds').toDate(),
         })
         .returning()
     )[0];
@@ -133,6 +134,15 @@ export class AuthService {
     }
 
     if (new Date(Date.now()) > new Date(dbToken.expiration_date)) {
+      const { tokenId } = (await this.db
+        .insert(activate_tokens)
+        .values({
+          user_id: dbToken.id,
+          expiration_date: moment().add(env.ACTIVATE_TOKENS_EXPIRATION, 'milliseconds').toDate(),
+        }).returning({
+          tokenId: activate_tokens.id
+        }))[0];
+
       const data = (
         await this.db
           .select({
@@ -141,7 +151,7 @@ export class AuthService {
           })
           .from(activate_tokens)
           .innerJoin(users, eq(activate_tokens.user_id, users.id))
-          .where(eq(activate_tokens.token, token))
+          .where(eq(activate_tokens.id, tokenId))
       )[0];
 
       await this.mailer.sendMail({
@@ -213,7 +223,7 @@ export class AuthService {
         .insert(forget_password_tokens)
         .values({
           user_id: user.id,
-          expiration_date: moment().add(5, 'minutes').toDate(),
+          expiration_date: moment().add(env.FORTGET_PASSWORD_TOKENS_EXPIRATION, 'milliseconds').toDate(),
         })
         .returning()
     )[0];
@@ -244,7 +254,16 @@ export class AuthService {
       throw new BadRequestException('Token is not exist, Please try again');
     }
 
-    if (new Date(Date.now()) > new Date(dbToken.expiration_date)) {
+    if (new Date(Date.now()) < new Date(dbToken.expiration_date)) {
+      const { tokenId } = (await this.db
+        .insert(forget_password_tokens)
+        .values({
+          user_id: dbToken.id,
+          expiration_date: moment().add(env.FORTGET_PASSWORD_TOKENS_EXPIRATION, 'milliseconds').toDate(),
+        }).returning({
+          tokenId: forget_password_tokens.id
+        }))[0];
+
       const data = (
         await this.db
           .select({
@@ -252,8 +271,8 @@ export class AuthService {
             user: users,
           })
           .from(forget_password_tokens)
-          .innerJoin(users, eq(activate_tokens.user_id, users.id))
-          .where(eq(activate_tokens.token, token))
+          .innerJoin(users, eq(forget_password_tokens.user_id, users.id))
+          .where(eq(forget_password_tokens.id, tokenId))
       )[0];
 
       await this.mailer.sendMail({

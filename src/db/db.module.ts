@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { createDB } from './db';
+import { db } from './db';
 
 export const DRIZZLE = Symbol('drizzle-connetion');
 
@@ -8,7 +8,7 @@ export const DRIZZLE = Symbol('drizzle-connetion');
   providers: [
     {
       provide: DRIZZLE,
-      useFactory: createDB,
+      useFactory: () => db,
     },
   ],
 

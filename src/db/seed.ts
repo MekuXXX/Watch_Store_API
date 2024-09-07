@@ -1,41 +1,36 @@
-// import { Table, getTableName, sql } from 'drizzle-orm';
-// import { DrizzleDB } from './drizzle';
-// import { createDB } from './db';
-// import * as schema from './schema';
-// import * as seeds from './seeds';
+import { Table, getTableName, sql } from 'drizzle-orm';
+import { DrizzleDB } from './drizzle';
+import { db, pool } from './db';
+import * as schema from './schema';
+import * as seeds from './seeds';
+import env from 'src/utils/env';
 
-// config();
+console.log(env.NODE_ENV);
 
-// async function resetTable(db: DrizzleDB, table: Table) {
-//   return db.execute(
-//     sql.raw(`TRUNCATE TABLE ${getTableName(table)} RESTART IDENTITY CASCADE`),
-//   );
-// }
+if (!env.DB_SEEDING) {
+  throw new Error('You must set DB_SEEDING to "true" when running seeds');
+}
 
-// async function main() {
-//   const isSeed = process.env.DATABASE_SEED.toLowerCase();
+async function resetTable(db: DrizzleDB, table: Table) {
+  return db.execute(
+    sql.raw(`TRUNCATE TABLE ${getTableName(table)} RESTART IDENTITY CASCADE`),
+  );
+}
 
-//   if (isSeed !== 'true') {
-//     throw new Error('Seeding is not accepted in this database');
-//   }
+async function main() {
+  for (const table of [
+    schema.users,
+    schema.activate_tokens,
+    schema.forget_password_tokens,
+  ]) {
+    // await db.delete(table); // clear tables without truncating / resetting ids
+    await resetTable(db, table);
+  }
 
-//   const db = createDB();
-//   console.log('Hitted');
-//   const user = await db.query.users.findFirst({
-//     with: { activate_tokens: true },
-//   });
-//   console.log(user);
+  await seeds.users(db);
+  await seeds.activateTokens(db);
 
-//   // for (const table of [
-//   //   schema.users,
-//   //   schema.activate_tokens,
-//   //   schema.forget_password_tokens,
-//   // ]) {
-//   //   // await db.delete(table); // clear tables without truncating / resetting ids
-//   //   await resetTable(db, table);
-//   // }
+  await pool.end();
+}
 
-//   // seeds.users(db);
-// }
-
-// main();
+main();

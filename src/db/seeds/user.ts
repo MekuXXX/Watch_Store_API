@@ -1,5 +1,5 @@
 import { DrizzleDB } from '../drizzle';
-import { insertUserSchema, users } from '../schema';
+import { User, insertUserSchema, users } from '../schema';
 import { faker } from '@faker-js/faker';
 import * as bcrypt from 'bcrypt';
 
@@ -17,8 +17,7 @@ export default async function seed(db: DrizzleDB) {
         }),
       );
 
-    console.log(usersData[0]);
-    // await db.insert(users).values(usersData as any);
+    await db.insert(users).values(usersData as User[]);
   } catch (err) {
     console.log('Error in seeding users: ', err.message);
   }

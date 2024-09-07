@@ -9,6 +9,7 @@ function loadEnv() {
   const nodeEnv = process.env.NODE_ENV || 'development';
   const envFile = `.env.${nodeEnv}`;
   const envPath = path.resolve(__dirname, '../..', envFile);
+  console.log(envPath);
 
   if (fs.existsSync(envPath)) {
     return config({ path: envPath });
@@ -21,8 +22,8 @@ expand(loadEnv());
 
 const stringBoolean = z.coerce
   .string()
-  .transform((val) => val.toLowerCase() === 'true')
-  .default('false');
+  .default('false')
+  .transform((val) => val.toLowerCase() === 'true');
 
 const stringNumber = z
   .string()
@@ -47,7 +48,7 @@ const EnvSchema = z.object({
   DB_PASSWORD: z.string().optional(),
   DB_NAME: z.string().optional(),
   DB_PORT: z.coerce.number().optional(),
-  DATABASE_URL: z.string(),
+  DB_URL: z.string(),
   DB_MIGRATING: stringBoolean,
   DB_SEEDING: stringBoolean,
 
@@ -70,6 +71,10 @@ const EnvSchema = z.object({
   MAIL_PORT: stringNumber,
   MAIL_USER: z.string(),
   MAIL_PASSWORD: z.string(),
+
+  // Others
+  FORGET_PASSWORD_TOKENS_EXPIRATION: stringNumber,
+  ACTIVATE_TOKENS_EXPIRATION: stringNumber,
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;
