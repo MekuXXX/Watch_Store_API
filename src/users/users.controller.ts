@@ -14,16 +14,23 @@ import {
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Request } from 'express';
-import { ApiBadRequestResponse, ApiNotFoundResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { User, User as UserType } from 'src/db/schema';
 import { Roles } from 'src/decorators/role';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
 @ApiTags('Users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @ApiResponse({
     status: HttpStatus.OK,
@@ -41,7 +48,9 @@ export class UsersController {
       },
     },
   })
-  @ApiUnauthorizedResponse({ example: { status: false, message: "Unauthorized" } })
+  @ApiUnauthorizedResponse({
+    example: { status: false, message: 'Unauthorized' },
+  })
   @Get('current')
   current(@Req() req: Request) {
     return this.usersService.current(req.user as UserType);
@@ -69,14 +78,15 @@ export class UsersController {
     description: "Can't found the user in the Database",
     example: {
       success: false,
-      message: "User is not exist"
-    }
+      message: 'User is not exist',
+    },
   })
   @ApiUnauthorizedResponse({
-    description: "Normal user can't hit this route to get any user data", example: {
+    description: "Normal user can't hit this route to get any user data",
+    example: {
       success: false,
-      message: "Unauthorized"
-    }
+      message: 'Unauthorized',
+    },
   })
   @Get(':id')
   @Roles(['admin'])
@@ -106,19 +116,20 @@ export class UsersController {
     description: "Can't found the user in the Database",
     example: {
       success: false,
-      message: "User is not exist"
-    }
+      message: 'User is not exist',
+    },
   })
   @ApiBadRequestResponse({
-    description: "Can't found any data to update user with it", example: {
+    description: "Can't found any data to update user with it",
+    example: {
       success: false,
-      message: "Must provide a data to update the user"
-    }
+      message: 'Must provide a data to update the user',
+    },
   })
   @Patch('current')
   updateCurrent(@Req() req: Request, @Body() updateUserDto: UpdateUserDto) {
-    const { id, password } = req.user as UserType;
-    return this.usersService.update(id, password, updateUserDto);
+    const { id } = req.user as UserType;
+    return this.usersService.update(id, updateUserDto);
   }
 
   @ApiResponse({
@@ -143,20 +154,22 @@ export class UsersController {
     description: "Can't found the user in the Database",
     example: {
       success: false,
-      message: "User is not exist"
-    }
+      message: 'User is not exist',
+    },
   })
   @ApiBadRequestResponse({
-    description: "Can't found any data to update user with it", example: {
+    description: "Can't found any data to update user with it",
+    example: {
       success: false,
-      message: "Must provide a data to update the user"
-    }
+      message: 'Must provide a data to update the user',
+    },
   })
   @ApiUnauthorizedResponse({
-    description: "Normal user can't hit this route to update any user", example: {
+    description: "Normal user can't hit this route to update any user",
+    example: {
       success: false,
-      message: "Unauthorized"
-    }
+      message: 'Unauthorized',
+    },
   })
   @Patch(':id')
   @Roles(['admin'])
@@ -165,8 +178,16 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
     @Param('id') id: string,
   ) {
-    const { password } = req.user as UserType;
-    return this.usersService.update(id, password as string, updateUserDto);
+    return this.usersService.update(id, updateUserDto);
+  }
+
+  @Patch('current/password')
+  updatePassword(
+    @Req() req: Request,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ) {
+    const { id, password } = req.user as User;
+    return this.usersService.updatePassword(id, password, updatePasswordDto);
   }
 
   @ApiResponse({
@@ -188,14 +209,15 @@ export class UsersController {
     description: "Can't found the user in the Database",
     example: {
       success: false,
-      message: "User is not exist"
-    }
+      message: 'User is not exist',
+    },
   })
   @ApiUnauthorizedResponse({
-    description: "Normal user can't hit this route to delete any user", example: {
+    description: "Normal user can't hit this route to delete any user",
+    example: {
       success: false,
-      message: "Unauthorized"
-    }
+      message: 'Unauthorized',
+    },
   })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)

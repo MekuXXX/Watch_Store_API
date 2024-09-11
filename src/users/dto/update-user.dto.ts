@@ -11,9 +11,8 @@ export class UpdateUserDto {
   @IsString()
   avatar_url?: string;
 
-  @ApiProperty({ example: 'New very secret password' })
+  @ApiProperty({ example: 'https://image_url.com' })
   @IsOptional()
   @IsString()
-  @Length(8, 20, { message: 'Password has to be between 8 and 20 characters' })
-  password?: string;
+  cover_url?: string;
 }

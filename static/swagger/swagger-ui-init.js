@@ -707,6 +707,30 @@ window.onload = function() {
             "Users"
           ]
         }
+      },
+      "/api/users/current/password": {
+        "patch": {
+          "operationId": "UsersController_updatePassword",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePasswordDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "Users"
+          ]
+        }
       }
     },
     "info": {
@@ -805,15 +829,32 @@ window.onload = function() {
               "type": "string",
               "example": "https://image_url.com"
             },
-            "password": {
+            "cover_url": {
               "type": "string",
-              "example": "New very secret password"
+              "example": "https://image_url.com"
             }
           },
           "required": [
             "username",
             "avatar_url",
-            "password"
+            "cover_url"
+          ]
+        },
+        "UpdatePasswordDto": {
+          "type": "object",
+          "properties": {
+            "old_password": {
+              "type": "string",
+              "example": "Old password"
+            },
+            "new_password": {
+              "type": "string",
+              "example": "New password"
+            }
+          },
+          "required": [
+            "old_password",
+            "new_password"
           ]
         }
       }

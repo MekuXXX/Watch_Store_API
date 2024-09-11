@@ -1,32 +1,32 @@
 import {
-  BadGatewayException,
   BadRequestException,
-  Injectable,
   Inject,
-  UnauthorizedException,
+  Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUserDTO } from './dto/createUser.dto';
-import { SignInUserDTO } from './dto/signInUser.dto';
 import { JwtService } from '@nestjs/jwt';
-import { MailerService } from 'src/mailer/mailer.service';
-import { ForgetPasswordDTO } from './dto/forgetPassword.dto';
-import { ResetPasswordDTO } from './dto/resetPassword.dto';
 import * as bcrypt from 'bcrypt';
+import { and, eq } from 'drizzle-orm';
 import * as moment from 'moment';
-import {
-  ActivateToken,
-  User,
-  UserRole,
-  activate_tokens,
-  forget_password_tokens,
-  users,
-} from 'src/db/schema';
 import { DRIZZLE } from 'src/db/db.module';
 import { DrizzleDB } from 'src/db/drizzle';
-import { and, eq } from 'drizzle-orm';
+import {
+  activate_tokens,
+  ActivateToken,
+  forget_password_tokens,
+  User,
+  UserRole,
+  users,
+} from 'src/db/schema';
+import { MailerService } from 'src/mailer/mailer.service';
 import env from 'src/utils/env';
+
+import { CreateUserDTO } from './dto/createUser.dto';
+import { ForgetPasswordDTO } from './dto/forgetPassword.dto';
+import { ResetPasswordDTO } from './dto/resetPassword.dto';
+import { SignInUserDTO } from './dto/signInUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -34,7 +34,7 @@ export class AuthService {
     @Inject(DRIZZLE) private db: DrizzleDB,
     private jwt: JwtService,
     private mailer: MailerService,
-  ) { }
+  ) {}
 
   async signup(userDto: CreateUserDTO) {
     const { username, email, password } = userDto;
@@ -60,7 +60,9 @@ export class AuthService {
     )[0];
 
     if (!user) {
-      throw new InternalServerErrorException("Error happen during creating the user");
+      throw new InternalServerErrorException(
+        'Error happen during creating the user',
+      );
     }
 
     const token = (
@@ -68,7 +70,9 @@ export class AuthService {
         .insert(activate_tokens)
         .values({
           user_id: user.id,
-          expiration_date: moment().add(env.ACTIVATE_TOKENS_EXPIRATION, 'milliseconds').toDate(),
+          expiration_date: moment()
+            .add(env.ACTIVATE_TOKENS_EXPIRATION, 'milliseconds')
+            .toDate(),
         })
         .returning()
     )[0];
@@ -76,7 +80,9 @@ export class AuthService {
     await this.mailer.sendMail({
       recipients: [{ name: user.username, address: user.email }],
       subject: 'Verify Watch Store Account',
-      html: `<h1>Verify email: <a href="${env.APP_CLIENT_URL}/verify-email/${token.token}">Click here</a></h1>`,
+      html: `<h1>Verify email: <a href="${env.APP_CLIENT_URL}/verify-email/${
+        token.token
+      }">Click here</a></h1>`,
     });
 
     return {
@@ -108,7 +114,9 @@ export class AuthService {
     const token = await this.createToken({ id: user.id, role: user.role });
 
     if (!token) {
-      throw new InternalServerErrorException("Error during creating user session");
+      throw new InternalServerErrorException(
+        'Error during creating user session',
+      );
     }
 
     return {
@@ -136,14 +144,17 @@ export class AuthService {
     }
 
     if (new Date(Date.now()) > new Date(dbToken.expiration_date)) {
-      const { tokenId } = (await this.db
-        .insert(activate_tokens)
-        .values({
-          user_id: dbToken.id,
-          expiration_date: moment().add(env.ACTIVATE_TOKENS_EXPIRATION, 'milliseconds').toDate(),
-        }).returning({
-          tokenId: activate_tokens.id
-        }))[0];
+      const { tokenId } = (
+        await this.db
+          .insert(activate_tokens)
+          .values({
+            user_id: dbToken.user_id,
+            expiration_date: moment()
+              .add(env.ACTIVATE_TOKENS_EXPIRATION, 'milliseconds')
+              .toDate(),
+          })
+          .returning({ tokenId: activate_tokens.id })
+      )[0];
 
       const data = (
         await this.db
@@ -159,7 +170,9 @@ export class AuthService {
       await this.mailer.sendMail({
         recipients: [{ name: data.user.username, address: data.user.email }],
         subject: 'Verify Watch Store Account',
-        html: `<h1>Verify email: <a href="${env.APP_CLIENT_URL}/verify-email/${data.activateToken.token}">Click here</a></h1>`,
+        html: `<h1>Verify email: <a href="${env.APP_CLIENT_URL}/verify-email/${
+          data.activateToken.token
+        }">Click here</a></h1>`,
       });
 
       throw new BadRequestException('Token is expired, We have sent a new one');
@@ -180,7 +193,9 @@ export class AuthService {
     )[0];
 
     if (!user) {
-      throw new InternalServerErrorException("Error happened during verifying the user")
+      throw new InternalServerErrorException(
+        'Error happened during verifying the user',
+      );
     }
 
     await this.db
@@ -204,13 +219,12 @@ export class AuthService {
         ),
       );
 
-    const jwtToken = await this.createToken({
-      id: user.id,
-      role: user.role
-    });
+    const jwtToken = await this.createToken({ id: user.id, role: user.role });
 
     if (!jwtToken) {
-      throw new InternalServerErrorException('Error happend during create user session')
+      throw new InternalServerErrorException(
+        'Error happend during create user session',
+      );
     }
 
     return {
@@ -237,19 +251,25 @@ export class AuthService {
         .insert(forget_password_tokens)
         .values({
           user_id: user.id,
-          expiration_date: moment().add(env.FORGET_PASSWORD_TOKENS_EXPIRATION, 'milliseconds').toDate(),
+          expiration_date: moment()
+            .add(env.FORGET_PASSWORD_TOKENS_EXPIRATION, 'milliseconds')
+            .toDate(),
         })
         .returning()
     )[0];
 
     if (!forgetToken) {
-      throw new InternalServerErrorException("Error happend during in forget password")
+      throw new InternalServerErrorException(
+        'Error happend during in forget password',
+      );
     }
 
     await this.mailer.sendMail({
       recipients: [{ name: user.username, address: user.email }],
       subject: 'Forget Password of Watch Store Account',
-      html: `<h1>Forget password: <a href="${env.APP_CLIENT_URL}/forget-password/${forgetToken.token}">Click Here</a></h1>`,
+      html: `<h1>Forget password: <a href="${env.APP_CLIENT_URL}/reset-password/${
+        forgetToken.token
+      }">Click Here</a></h1>`,
     });
 
     return { success: true, message: 'Reset mail has sent successfully' };
@@ -272,15 +292,18 @@ export class AuthService {
       throw new BadRequestException('Token is not exist, Please try again');
     }
 
-    if (new Date(Date.now()) < new Date(dbToken.expiration_date)) {
-      const { tokenId } = (await this.db
-        .insert(forget_password_tokens)
-        .values({
-          user_id: dbToken.id,
-          expiration_date: moment().add(env.FORGET_PASSWORD_TOKENS_EXPIRATION, 'milliseconds').toDate(),
-        }).returning({
-          tokenId: forget_password_tokens.id
-        }))[0];
+    if (new Date(Date.now()) > new Date(dbToken.expiration_date)) {
+      const { tokenId } = (
+        await this.db
+          .insert(forget_password_tokens)
+          .values({
+            user_id: dbToken.user_id,
+            expiration_date: moment()
+              .add(env.FORGET_PASSWORD_TOKENS_EXPIRATION, 'milliseconds')
+              .toDate(),
+          })
+          .returning({ tokenId: forget_password_tokens.id })
+      )[0];
 
       const data = (
         await this.db
@@ -296,7 +319,9 @@ export class AuthService {
       await this.mailer.sendMail({
         recipients: [{ name: data.user.username, address: data.user.email }],
         subject: 'Forget Password of Watch Store Account',
-        html: `<h1>Forget password: <a href="${env.APP_CLIENT_URL}/forget-password/${data.forgetToken.token}">Click Here</a></h1>`,
+        html: `<h1>Forget password: <a href="${
+          env.APP_CLIENT_URL
+        }/reset-password/${data.forgetToken.token}">Click Here</a></h1>`,
       });
 
       throw new BadRequestException('Token is expired, We have sent a new one');
@@ -318,7 +343,7 @@ export class AuthService {
     )[0];
 
     if (!user) {
-      throw new InternalServerErrorException("Error during updating the user");
+      throw new InternalServerErrorException('Error during updating the user');
     }
 
     await this.db
@@ -347,18 +372,22 @@ export class AuthService {
 
   async validateResetToken(token: string) {
     const dbToken = await this.db.query.forget_password_tokens.findFirst({
-      where: (dbToken, { eq }) => eq(dbToken.token, token)
+      where: (dbToken, { eq }) => eq(dbToken.token, token),
     });
 
     if (!dbToken) {
-      throw new BadRequestException("Token is not exist");
+      throw new BadRequestException('Token is not exist');
     }
 
     if (dbToken.is_used) {
-      throw new BadRequestException("Token is expired");
+      throw new BadRequestException('Token is expired');
     }
 
-    return { success: true, message: "Token is valid to be used" };
+    if (new Date(Date.now()) > new Date(dbToken.expiration_date)) {
+      throw new BadRequestException('Token is expired');
+    }
+
+    return { success: true, message: 'Token is valid to be used' };
   }
 
   async hashPassword(password: string) {
@@ -371,7 +400,7 @@ export class AuthService {
     return await bcrypt.compare(password, hashedPassword);
   }
 
-  async createToken(payload: { id: string, role: UserRole }) {
+  async createToken(payload: { id: string; role: UserRole }) {
     return await this.jwt.signAsync(payload, {
       secret: env.JWT_SECRET,
     });

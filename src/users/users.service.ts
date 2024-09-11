@@ -1,17 +1,24 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { eq } from 'drizzle-orm';
 import { AuthService } from 'src/auth/auth.service';
+import { DRIZZLE } from 'src/db/db.module';
 import { DrizzleDB } from 'src/db/drizzle';
 import { User, users } from 'src/db/schema';
-import { DRIZZLE } from 'src/db/db.module';
-import { eq } from 'drizzle-orm';
+
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(DRIZZLE) private db: DrizzleDB,
     private authService: AuthService,
-  ) { }
+  ) {}
 
   async current(user: User) {
     const { id, username, email, avatar_url } = user;
@@ -56,26 +63,19 @@ export class UsersService {
     };
   }
 
-  async update(id: string, password: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     if (
       !updateUserDto.username &&
       !updateUserDto.avatar_url &&
-      !updateUserDto.password
+      !updateUserDto.cover_url
     ) {
       throw new BadRequestException('Must provide a data to update the user');
     }
-
-    if (updateUserDto.password) {
-      password = await this.authService.hashPassword(updateUserDto.password);
-    }
-
-    delete updateUserDto.password;
 
     const updatedUser = await this.db
       .update(users)
       .set({
         ...updateUserDto,
-        password,
       })
       .where(eq(users.id, id))
       .returning({
@@ -83,10 +83,11 @@ export class UsersService {
         username: users.username,
         email: users.email,
         avatar_url: users.avatar_url,
+        cover_url: users.cover_url,
       });
 
     if (!updatedUser) {
-      throw new NotFoundException("User is not exit")
+      throw new NotFoundException('User is not exit');
     }
 
     return {
@@ -94,6 +95,28 @@ export class UsersService {
       message: 'User has been updated successfully',
       data: { userData: updatedUser },
     };
+  }
+
+  async updatePassword(
+    id: string,
+    password: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ) {
+    const { old_password, new_password } = updatePasswordDto;
+    const isOldPassMatch = await this.authService.comparePassword(
+      old_password,
+      password,
+    );
+
+    if (!isOldPassMatch) {
+      throw new BadRequestException('Old password is wrong');
+    }
+
+    password = await this.authService.hashPassword(new_password);
+
+    await this.db.update(users).set({ password }).where(eq(users.id, id));
+
+    return { success: true, message: 'User password updated successfully' };
   }
 
   async remove(id: string) {

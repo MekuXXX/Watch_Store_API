@@ -43,6 +43,13 @@
       "when": 1725238590438,
       "tag": "0005_cynical_risque",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1725887146435,
+      "tag": "0006_mute_gunslinger",
+      "breakpoints": true
     }
   ]
 }

@@ -5,12 +5,11 @@ import { SignInUserDTO } from './dto/signInUser.dto';
 import { ForgetPasswordDTO } from './dto/forgetPassword.dto';
 import { ResetPasswordDTO } from './dto/resetPassword.dto';
 import { Public } from 'src/decorators/public';
-import { ApiBadRequestResponse, ApiForbiddenResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { mediumint } from 'drizzle-orm/mysql-core';
+import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
-@Controller('auth')
-@Public()
 @ApiTags("Authentication")
+@Public()
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
@@ -216,7 +215,6 @@ export class AuthController {
     return this.authService.resetPassword(token, resetPasswordDto);
   }
 
-  @Get('validate-reset/:token')
   @ApiOkResponse({
     description: "The token is valid to be used by the user to reset the password",
     example: {
@@ -238,6 +236,7 @@ export class AuthController {
       message: "Token is expired",
     }
   })
+  @Get('validate-reset/:token')
   validateResetToken(@Param('token') token: string) {
     return this.authService.validateResetToken(token);
   }
