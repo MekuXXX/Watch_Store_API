@@ -23,6 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     const user = await this.db.query.users.findFirst({
       where: (user, { eq }) => eq(user.id, payload.id),
+      with: { addresses: true },
     });
 
     if (!user) {

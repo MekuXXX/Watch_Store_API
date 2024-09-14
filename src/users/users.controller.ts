@@ -173,11 +173,7 @@ export class UsersController {
   })
   @Patch(':id')
   @Roles(['admin'])
-  updateAdmin(
-    @Req() req: Request,
-    @Body() updateUserDto: UpdateUserDto,
-    @Param('id') id: string,
-  ) {
+  updateAdmin(@Body() updateUserDto: UpdateUserDto, @Param('id') id: string) {
     return this.usersService.update(id, updateUserDto);
   }
 

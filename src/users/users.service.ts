@@ -8,7 +8,7 @@ import { eq } from 'drizzle-orm';
 import { AuthService } from 'src/auth/auth.service';
 import { DRIZZLE } from 'src/db/db.module';
 import { DrizzleDB } from 'src/db/drizzle';
-import { User, users } from 'src/db/schema';
+import { User, UserAddresses, user_addresses, users } from 'src/db/schema';
 
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -21,18 +21,15 @@ export class UsersService {
   ) {}
 
   async current(user: User) {
-    const { id, username, email, avatar_url } = user;
+    delete user.password;
+    delete user.created_at;
+    delete user.updated_at;
 
     return {
       success: true,
       message: 'User has been obtained successfully',
       data: {
-        userData: {
-          id,
-          username,
-          email,
-          avatar_url,
-        },
+        userData: user,
       },
     };
   }
@@ -45,6 +42,11 @@ export class UsersService {
         username: true,
         email: true,
         avatar_url: true,
+        cover_url: true,
+        phone: true,
+      },
+      with: {
+        addresses: true,
       },
     });
 
@@ -56,44 +58,75 @@ export class UsersService {
       success: true,
       message: 'User has been obtained successfully',
       data: {
-        userData: {
-          ...user,
-        },
+        userData: user,
       },
     };
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    if (
-      !updateUserDto.username &&
-      !updateUserDto.avatar_url &&
-      !updateUserDto.cover_url
-    ) {
+    const { addresses, ...userData } = updateUserDto;
+    let checkValues = true;
+    let updatedUserId = undefined;
+
+    if (Object.keys(userData).length > 0) {
+      const user = (
+        await this.db
+          .update(users)
+          .set(userData)
+          .where(eq(users.id, id))
+          .returning({ id: users.id })
+      )[0];
+
+      updatedUserId = user.id;
+
+      checkValues = false;
+    }
+
+    if (addresses.length > 0) {
+      for (let i = 0; i < addresses.length; ++i) {
+        (addresses[i] as unknown as any).user_id = id;
+      }
+      const user_address = (
+        await this.db
+          .insert(user_addresses)
+          .values(addresses as UserAddresses[])
+          .returning()
+      )[0];
+
+      updatedUserId = user_address.user_id;
+
+      checkValues = false;
+    }
+
+    if (checkValues) {
       throw new BadRequestException('Must provide a data to update the user');
     }
 
-    const updatedUser = await this.db
-      .update(users)
-      .set({
-        ...updateUserDto,
-      })
-      .where(eq(users.id, id))
-      .returning({
-        id: users.id,
-        username: users.username,
-        email: users.email,
-        avatar_url: users.avatar_url,
-        cover_url: users.cover_url,
-      });
-
-    if (!updatedUser) {
+    if (!updatedUserId) {
       throw new NotFoundException('User is not exit');
     }
+
+    console.log(id, updatedUserId);
+
+    const user = await this.db.query.users.findFirst({
+      where: (user, { eq }) => eq(user.id, updatedUserId),
+      columns: {
+        id: true,
+        username: true,
+        email: true,
+        avatar_url: true,
+        cover_url: true,
+        phone: true,
+      },
+      with: {
+        addresses: true,
+      },
+    });
 
     return {
       success: true,
       message: 'User has been updated successfully',
-      data: { userData: updatedUser },
+      data: { userData: user },
     };
   }
 

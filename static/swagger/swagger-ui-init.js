@@ -818,6 +818,38 @@ window.onload = function() {
             "confirmPassword"
           ]
         },
+        "UserAddressDto": {
+          "type": "object",
+          "properties": {
+            "country": {
+              "type": "string",
+              "example": "USA"
+            },
+            "city": {
+              "type": "string",
+              "example": "New York"
+            },
+            "state": {
+              "type": "string",
+              "example": "NY"
+            },
+            "street": {
+              "type": "string",
+              "example": "123 Main St"
+            },
+            "zipcode": {
+              "type": "string",
+              "example": "10001"
+            }
+          },
+          "required": [
+            "country",
+            "city",
+            "state",
+            "street",
+            "zipcode"
+          ]
+        },
         "UpdateUserDto": {
           "type": "object",
           "properties": {
@@ -832,12 +864,24 @@ window.onload = function() {
             "cover_url": {
               "type": "string",
               "example": "https://image_url.com"
+            },
+            "phone": {
+              "type": "string",
+              "example": "https://image_url.com"
+            },
+            "addresses": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/UserAddressDto"
+              }
             }
           },
           "required": [
             "username",
             "avatar_url",
-            "cover_url"
+            "cover_url",
+            "phone",
+            "addresses"
           ]
         },
         "UpdatePasswordDto": {
