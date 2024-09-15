@@ -82,7 +82,7 @@ export class UsersService {
       checkValues = false;
     }
 
-    if (addresses.length > 0) {
+    if (addresses?.length > 0) {
       for (let i = 0; i < addresses.length; ++i) {
         (addresses[i] as unknown as any).user_id = id;
       }

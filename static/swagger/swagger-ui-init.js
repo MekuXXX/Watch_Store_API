@@ -731,6 +731,282 @@ window.onload = function() {
             "Users"
           ]
         }
+      },
+      "/api/categories": {
+        "post": {
+          "operationId": "CategoriesController_create",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCategoryDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Category created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Category created successfully",
+                      "data": {
+                        "category": {
+                          "id": "123",
+                          "name": "Men's",
+                          "cover_url": "https://category_cover_url.com"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input data",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Bad request"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Categories"
+          ]
+        },
+        "get": {
+          "operationId": "CategoriesController_findAll",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "Retrieve all categories",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Got the categories successfully",
+                      "data": {
+                        "categories": [
+                          {
+                            "id": "123",
+                            "name": "Men's",
+                            "cover_url": "https://category_cover_url.com"
+                          },
+                          {
+                            "id": "124",
+                            "name": "Women's",
+                            "cover_url": "https://category_cover_url.com"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Categories"
+          ]
+        }
+      },
+      "/api/categories/{value}": {
+        "get": {
+          "operationId": "CategoriesController_findOne",
+          "parameters": [
+            {
+              "name": "value",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "type",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Retrieve category by ID or name",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Category found successfully",
+                      "data": {
+                        "category": {
+                          "id": "123",
+                          "name": "Men's",
+                          "cover_url": "https://category_cover_url.com"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid type query parameter",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Must provide a valid \"type\" query parameter (id or name)"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Category not found",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Category not found"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Categories"
+          ]
+        },
+        "patch": {
+          "operationId": "CategoriesController_update",
+          "parameters": [
+            {
+              "name": "value",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "type",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCategoryDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Category updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Category updated successfully",
+                      "data": {
+                        "category": {
+                          "id": "123",
+                          "name": "Updated Name",
+                          "cover_url": "https://updated_cover_url.com"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid update data",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Must provide valid data to update the category"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Categories"
+          ]
+        },
+        "delete": {
+          "operationId": "CategoriesController_remove",
+          "parameters": [
+            {
+              "name": "value",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "type",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Category deleted successfully"
+            },
+            "400": {
+              "description": "Invalid type for deletion",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Must provide a valid \"type\" query parameter (id or name)"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Category not found",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Category is not exist"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Categories"
+          ]
+        }
       }
     },
     "info": {
@@ -900,6 +1176,45 @@ window.onload = function() {
             "old_password",
             "new_password"
           ]
+        },
+        "CreateCategoryDto": {
+          "type": "object",
+          "properties": {
+            "with": {
+              "type": "string",
+              "example": "id"
+            },
+            "name": {
+              "type": "string",
+              "example": "Men's"
+            },
+            "cover_url": {
+              "type": "string",
+              "example": "https://category_cover_url.com"
+            }
+          },
+          "required": [
+            "with",
+            "name",
+            "cover_url"
+          ]
+        },
+        "UpdateCategoryDto": {
+          "type": "object",
+          "properties": {
+            "with": {
+              "type": "string",
+              "example": "id"
+            },
+            "name": {
+              "type": "string",
+              "example": "Men's"
+            },
+            "cover_url": {
+              "type": "string",
+              "example": "https://category_cover_url.com"
+            }
+          }
         }
       }
     }

@@ -14,6 +14,15 @@ CREATE TABLE IF NOT EXISTS "activate_tokens" (
 	"user_id" uuid NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "categories" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" varchar(255) NOT NULL,
+	"cover_url" varchar(1025) NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "categories_name_unique" UNIQUE("name")
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "forget_password_tokens" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"token" uuid DEFAULT gen_random_uuid() NOT NULL,
@@ -29,8 +38,8 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"username" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"password" varchar(255) NOT NULL,
-	"avatar_url" varchar(255),
-	"cover_url" varchar(255),
+	"avatar_url" varchar(1025),
+	"cover_url" varchar(1025),
 	"phone" varchar(255),
 	"user_role" "user_role" DEFAULT 'user',
 	"is_active" boolean DEFAULT false,

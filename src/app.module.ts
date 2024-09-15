@@ -13,6 +13,7 @@ import { RolesGuard } from './guards/role';
 import env from './utils/env';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { join } from 'path';
     AuthModule,
     UsersModule,
     DbModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [

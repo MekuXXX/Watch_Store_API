@@ -1,5 +1,5 @@
 {
-  "id": "400cc68f-80df-47ac-84f1-7263bc90621c",
+  "id": "174e5f09-8f4f-444b-a471-0262bd7359f6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -74,6 +74,57 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
+    },
+    "public.categories": {
+      "name": "categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cover_url": {
+          "name": "cover_url",
+          "type": "varchar(1025)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "categories_name_unique": {
+          "name": "categories_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
     },
     "public.forget_password_tokens": {
       "name": "forget_password_tokens",
@@ -177,13 +228,13 @@
         },
         "avatar_url": {
           "name": "avatar_url",
-          "type": "varchar(255)",
+          "type": "varchar(1025)",
           "primaryKey": false,
           "notNull": false
         },
         "cover_url": {
           "name": "cover_url",
-          "type": "varchar(255)",
+          "type": "varchar(1025)",
           "primaryKey": false,
           "notNull": false
         },

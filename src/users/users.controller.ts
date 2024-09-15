@@ -6,7 +6,6 @@ import {
   Param,
   Delete,
   Req,
-  UnauthorizedException,
   HttpStatus,
   HttpCode,
   UseInterceptors,
