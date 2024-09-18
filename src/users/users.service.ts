@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, ilike } from 'drizzle-orm';
 import { AuthService } from 'src/auth/auth.service';
 import { DRIZZLE } from 'src/db/db.module';
 import { DrizzleDB } from 'src/db/drizzle';
@@ -12,6 +12,7 @@ import { User, UserAddresses, user_addresses, users } from 'src/db/schema';
 
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { QueriesDto } from 'src/dtos/queries.dto';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,28 @@ export class UsersService {
     @Inject(DRIZZLE) private db: DrizzleDB,
     private authService: AuthService,
   ) {}
+
+  async findAll(queries: QueriesDto) {
+    const dbUsers = await this.db.query.users.findMany({
+      columns: {
+        id: true,
+        username: true,
+        email: true,
+        avatar_url: true,
+        cover_url: true,
+        phone: true,
+      },
+      limit: queries.limit,
+      offset: queries.limit * (queries.page - 1),
+      where: ilike(users.username, `%${queries.query}%`),
+    });
+
+    return {
+      success: true,
+      message: 'Got the usesrs successfully',
+      data: { users: dbUsers },
+    };
+  }
 
   async current(user: User) {
     delete user.password;

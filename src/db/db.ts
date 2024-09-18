@@ -5,4 +5,4 @@ import { Pool } from 'pg';
 import env from 'src/utils/env';
 
 export const pool = new Pool({ connectionString: env.DB_URL });
-export const db = drizzle(pool, { schema, logger: true }) as DrizzleDB;
+export const db = drizzle(pool, { schema }) as DrizzleDB;

@@ -10,19 +10,21 @@ import {
   BadRequestException,
   HttpCode,
   HttpStatus,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiResponse,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
-  ApiUnauthorizedResponse,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Roles } from 'src/decorators/role';
 import { Public } from 'src/decorators/public';
+import { QueriesDto } from 'src/dtos/queries.dto';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -85,8 +87,11 @@ export class CategoriesController {
     },
   })
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  findAll(
+    @Query()
+    queriesDto: QueriesDto,
+  ) {
+    return this.categoriesService.findAll(queriesDto);
   }
 
   @Public()
@@ -169,9 +174,19 @@ export class CategoriesController {
   }
 
   @Roles(['admin'])
-  @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
+  @ApiOkResponse({
     description: 'Category deleted successfully',
+    example: {
+      success: true,
+      meessage: 'Category deleted successfully',
+      data: {
+        category: {
+          id: '1d432vrad312415134214cvra',
+          name: 'Men',
+          cover: 'https://cover_url.com',
+        },
+      },
+    },
   })
   @ApiNotFoundResponse({
     description: 'Category not found',
@@ -187,7 +202,6 @@ export class CategoriesController {
       message: 'Must provide a valid "type" query parameter (id or name)',
     },
   })
-  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':value')
   remove(@Param('value') value: string, @Query('type') type: 'id' | 'name') {
     if (type === 'id' || type === 'name') {

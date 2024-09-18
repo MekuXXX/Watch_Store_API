@@ -75,6 +75,8 @@ const EnvSchema = z.object({
   // Others
   FORGET_PASSWORD_TOKENS_EXPIRATION: stringNumber,
   ACTIVATE_TOKENS_EXPIRATION: stringNumber,
+  PAGINATION_LIMIT: stringNumber,
+  PAGINATION_PAGE: stringNumber,
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;

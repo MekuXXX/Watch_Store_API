@@ -6,8 +6,8 @@ export default async function seed(db: DrizzleDB) {
   try {
     const insertedCategories = Array(50)
       .fill('')
-      .map(() => ({
-        name: faker.commerce.department(),
+      .map((_, index: number) => ({
+        name: `${index} ${faker.commerce.department()}`,
         cover_url: faker.image.urlPicsumPhotos(),
       }));
 

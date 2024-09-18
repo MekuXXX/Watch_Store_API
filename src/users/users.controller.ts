@@ -9,12 +9,14 @@ import {
   HttpStatus,
   HttpCode,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Request } from 'express';
 import {
   ApiBadRequestResponse,
+  ApiBody,
   ApiNotFoundResponse,
   ApiResponse,
   ApiTags,
@@ -24,12 +26,51 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 import { User, User as UserType } from 'src/db/schema';
 import { Roles } from 'src/decorators/role';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { QueriesDto } from 'src/dtos/queries.dto';
 
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
 @ApiTags('Users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Roles(['admin'])
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Retrieve all categories',
+    schema: {
+      example: {
+        success: true,
+        message: 'Got the users successfully',
+        data: {
+          categories: [
+            {
+              id: '123',
+              name: "Men's",
+              cover_url: 'https://category_cover_url.com',
+            },
+            {
+              id: '124',
+              name: "Women's",
+              cover_url: 'https://category_cover_url.com',
+            },
+          ],
+        },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      "User don't have the permision to access this route or don't provide the access token",
+    example: { success: false, message: 'Unauthorized' },
+  })
+  @Get()
+  findAll(
+    @Query()
+    queriesDto: QueriesDto,
+  ) {
+    return this.usersService.findAll(queriesDto);
+  }
 
   @ApiResponse({
     status: HttpStatus.OK,

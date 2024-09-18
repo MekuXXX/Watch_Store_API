@@ -405,6 +405,55 @@ window.onload = function() {
           ]
         }
       },
+      "/api/users": {
+        "get": {
+          "operationId": "UsersController_findAll",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "Retrieve all categories",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Got the users successfully",
+                      "data": {
+                        "categories": [
+                          {
+                            "id": "123",
+                            "name": "Men's",
+                            "cover_url": "https://category_cover_url.com"
+                          },
+                          {
+                            "id": "124",
+                            "name": "Women's",
+                            "cover_url": "https://category_cover_url.com"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "User don't have the permision to access this route or don't provide the access token",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": false,
+                    "message": "Unauthorized"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Users"
+          ]
+        }
+      },
       "/api/users/current": {
         "get": {
           "operationId": "UsersController_current",
@@ -977,8 +1026,23 @@ window.onload = function() {
             }
           ],
           "responses": {
-            "204": {
-              "description": "Category deleted successfully"
+            "200": {
+              "description": "Category deleted successfully",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": true,
+                    "meessage": "Category deleted successfully",
+                    "data": {
+                      "category": {
+                        "id": "1d432vrad312415134214cvra",
+                        "name": "Men",
+                        "cover": "https://cover_url.com"
+                      }
+                    }
+                  }
+                }
+              }
             },
             "400": {
               "description": "Invalid type for deletion",
@@ -1180,10 +1244,6 @@ window.onload = function() {
         "CreateCategoryDto": {
           "type": "object",
           "properties": {
-            "with": {
-              "type": "string",
-              "example": "id"
-            },
             "name": {
               "type": "string",
               "example": "Men's"
@@ -1194,7 +1254,6 @@ window.onload = function() {
             }
           },
           "required": [
-            "with",
             "name",
             "cover_url"
           ]
@@ -1202,10 +1261,6 @@ window.onload = function() {
         "UpdateCategoryDto": {
           "type": "object",
           "properties": {
-            "with": {
-              "type": "string",
-              "example": "id"
-            },
             "name": {
               "type": "string",
               "example": "Men's"

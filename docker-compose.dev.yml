@@ -1,10 +1,10 @@
 version: '3'
 services:
-  app:
-    build:
-      target: development
-    volumes:
-      - .:/app
+  # app:
+  # build:
+  #   target: development
+  # volumes:
+  #   - .:/app
   db:
     volumes:
       - ./storage/postgres:/var/lib/postgresql/data

@@ -9,8 +9,9 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { DRIZZLE } from 'src/db/db.module';
 import { DrizzleDB } from 'src/db/drizzle';
-import { categories } from 'src/db/schema';
-import { eq } from 'drizzle-orm';
+import { categories, categories_rel } from 'src/db/schema';
+import { eq, ilike } from 'drizzle-orm';
+import { QueriesDto } from 'src/dtos/queries.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -31,14 +32,18 @@ export class CategoriesService {
     };
   }
 
-  async findAll() {
-    const categories = await this.db.query.categories.findMany({
+  async findAll(queries: QueriesDto) {
+    const dbCategories = await this.db.query.categories.findMany({
       columns: { id: true, name: true, cover_url: true },
+      limit: queries.limit,
+      offset: queries.limit * (queries.page - 1),
+      where: ilike(categories.name, `%${queries.query}%`),
     });
+
     return {
       success: true,
       message: 'Got the categories successfully',
-      data: { categories },
+      data: { categories: dbCategories },
     };
   }
 
@@ -111,7 +116,11 @@ export class CategoriesService {
       await this.db
         .delete(categories)
         .where(eq(type === 'id' ? categories.id : categories.name, value))
-        .returning()
+        .returning({
+          id: categories.id,
+          name: categories.name,
+          cover_url: categories.cover_url,
+        })
     )[0];
 
     if (!category) {

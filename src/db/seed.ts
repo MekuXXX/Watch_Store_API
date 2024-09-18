@@ -26,6 +26,7 @@ async function main() {
 
   const seedKeys = Object.keys(seed);
   for (const key of seedKeys) {
+    console.log('Start Excute', key);
     await seed[key](db);
   }
 
