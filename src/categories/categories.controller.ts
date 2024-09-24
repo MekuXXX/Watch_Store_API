@@ -8,9 +8,8 @@ import {
   Delete,
   Query,
   BadRequestException,
-  HttpCode,
   HttpStatus,
-  ValidationPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,6 +17,7 @@ import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -25,9 +25,11 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Roles } from 'src/decorators/role';
 import { Public } from 'src/decorators/public';
 import { QueriesDto } from 'src/dtos/queries.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('Categories')
 @Controller('categories')
+@UseInterceptors(CacheInterceptor)
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
@@ -86,6 +88,13 @@ export class CategoriesController {
       },
     },
   })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Limit the number of results',
+  })
+  @ApiQuery({ name: 'page', required: false, description: 'Pagination page' })
+  @ApiQuery({ name: 'query', required: false, description: 'Search query' })
   @Get()
   findAll(
     @Query()

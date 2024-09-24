@@ -1,13 +1,15 @@
 import { get } from 'node:http';
 import env from './env';
 import { createWriteStream } from 'node:fs';
+import { Logger } from '@nestjs/common';
 
 export function getSwaggerFiles() {
+  const logger = new Logger();
   get(
     `${env.SERVER_URL}/${env.SWAGGER_ROUTE}/swagger-ui-bundle.js`,
     function (response) {
       response.pipe(createWriteStream('static/swagger/swagger-ui-bundle.js'));
-      console.log(
+      logger.log(
         `Swagger UI bundle file written to: '/swagger-static/swagger-ui-bundle.js'`,
       );
     },
@@ -17,7 +19,7 @@ export function getSwaggerFiles() {
     `${env.SERVER_URL}/${env.SWAGGER_ROUTE}/swagger-ui-init.js`,
     function (response) {
       response.pipe(createWriteStream('static/swagger/swagger-ui-init.js'));
-      console.log(
+      logger.log(
         `Swagger UI init file written to: 'static/swagger/swagger-ui-init.js'`,
       );
     },
@@ -29,7 +31,7 @@ export function getSwaggerFiles() {
       response.pipe(
         createWriteStream('static/swagger/swagger-ui-standalone-preset.js'),
       );
-      console.log(
+      logger.log(
         `Swagger UI standalone preset file written to: 'static/swagger/swagger-ui-standalone-preset.js'`,
       );
     },
@@ -41,7 +43,7 @@ export function getSwaggerFiles() {
       response.pipe(
         createWriteStream('static/swagger/swagger-ui-standalone-preset.js'),
       );
-      console.log(
+      logger.log(
         `Swagger UI standalone preset file written to: 'static/swagger/swagger-ui-standalone-preset.js'`,
       );
     },
@@ -51,7 +53,7 @@ export function getSwaggerFiles() {
     `${env.SERVER_URL}/${env.SWAGGER_ROUTE}/swagger-ui.css`,
     function (response) {
       response.pipe(createWriteStream('static/swagger/swagger-ui.css'));
-      console.log(
+      logger.log(
         `Swagger UI css file written to: 'static/swagger/swagger-ui.css'`,
       );
     },

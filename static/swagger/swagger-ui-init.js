@@ -872,7 +872,29 @@ window.onload = function() {
         },
         "get": {
           "operationId": "CategoriesController_findAll",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "query",
+              "required": false,
+              "in": "query",
+              "description": "Search query",
+              "schema": {}
+            },
+            {
+              "name": "page",
+              "required": false,
+              "in": "query",
+              "description": "Pagination page",
+              "schema": {}
+            },
+            {
+              "name": "limit",
+              "required": false,
+              "in": "query",
+              "description": "Limit the number of results",
+              "schema": {}
+            }
+          ],
           "responses": {
             "200": {
               "description": "Retrieve all categories",
@@ -1109,6 +1131,310 @@ window.onload = function() {
             "Categories"
           ]
         }
+      },
+      "/api/products": {
+        "post": {
+          "operationId": "ProductsController_create",
+          "summary": "Create a new product",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateProductDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Product created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "product": {
+                          "id": "123e4567-e89b-12d3-a456-426614174000",
+                          "name": "Sample Product",
+                          "description": "This is a sample product",
+                          "image_url": "http://example.com/product.png",
+                          "quantity": 100,
+                          "price": 25.5
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid data provided",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Validation failed: name should not be empty"
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "statusCode": 403,
+                      "message": "Forbidden resource"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Products"
+          ]
+        },
+        "get": {
+          "operationId": "ProductsController_findAll",
+          "summary": "Retrieve all products",
+          "parameters": [
+            {
+              "name": "query",
+              "required": false,
+              "in": "query",
+              "description": "Search query",
+              "schema": {}
+            },
+            {
+              "name": "page",
+              "required": false,
+              "in": "query",
+              "description": "Pagination page",
+              "schema": {}
+            },
+            {
+              "name": "limit",
+              "required": false,
+              "in": "query",
+              "description": "Limit the number of results",
+              "schema": {}
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved products",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Got the products successfully",
+                      "data": {
+                        "products": [
+                          {
+                            "id": "123e4567-e89b-12d3-a456-426614174000",
+                            "name": "Sample Product",
+                            "description": "This is a sample product",
+                            "image_url": "http://example.com/product.png",
+                            "quantity": 100,
+                            "price": 25.5
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Products"
+          ]
+        }
+      },
+      "/api/products/{id}": {
+        "get": {
+          "operationId": "ProductsController_findOne",
+          "summary": "Retrieve a product by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "description": "Product ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Product found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "product": {
+                          "id": "123e4567-e89b-12d3-a456-426614174000",
+                          "name": "Sample Product",
+                          "description": "This is a sample product",
+                          "image_url": "http://example.com/product.png",
+                          "quantity": 100,
+                          "price": 25.5
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Product not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "statusCode": 404,
+                      "message": "Product is not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Products"
+          ]
+        },
+        "patch": {
+          "operationId": "ProductsController_update",
+          "summary": "Update a product by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "description": "Product ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateProductDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Product updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "product": {
+                          "id": "123e4567-e89b-12d3-a456-426614174000",
+                          "name": "Updated Product",
+                          "description": "This is an updated product",
+                          "image_url": "http://example.com/product-updated.png",
+                          "quantity": 80,
+                          "price": 30
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Product not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "statusCode": 404,
+                      "message": "Product is not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Products"
+          ]
+        },
+        "delete": {
+          "operationId": "ProductsController_remove",
+          "summary": "Delete a product by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "description": "Product ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Product deleted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "product": {
+                          "id": "123e4567-e89b-12d3-a456-426614174000",
+                          "name": "Deleted Product",
+                          "description": "This is a deleted product",
+                          "image_url": "http://example.com/product.png",
+                          "quantity": 0,
+                          "price": 0
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Product not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "statusCode": 404,
+                      "message": "Product is not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Products"
+          ]
+        }
       }
     },
     "info": {
@@ -1308,6 +1634,14 @@ window.onload = function() {
               "example": "https://category_cover_url.com"
             }
           }
+        },
+        "CreateProductDto": {
+          "type": "object",
+          "properties": {}
+        },
+        "UpdateProductDto": {
+          "type": "object",
+          "properties": {}
         }
       }
     }

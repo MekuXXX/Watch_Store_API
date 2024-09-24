@@ -1,5 +1,5 @@
 {
-  "id": "a1e8cc67-5a10-44e9-9735-be5b064d692b",
+  "id": "5bb36de0-9551-48f1-8e58-322bcfe5f0d0",
   "prevId": "174e5f09-8f4f-444b-a471-0262bd7359f6",
   "version": "7",
   "dialect": "postgresql",
@@ -401,13 +401,13 @@
           "name": "quantity",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "price": {
           "name": "price",
           "type": "double precision",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",

@@ -14,8 +14,8 @@ export const products = pgTable('products', {
   name: varchar('name', { length: 255 }).notNull(),
   description: varchar('description', { length: 255 }).notNull(),
   image_url: varchar('image_url', { length: 1025 }).notNull(),
-  quantity: integer('quantity'),
-  price: doublePrecision('price'),
+  quantity: integer('quantity').notNull(),
+  price: doublePrecision('price').notNull(),
 
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),

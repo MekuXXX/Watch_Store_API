@@ -14,6 +14,7 @@ import env from './utils/env';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CategoriesModule } from './categories/categories.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { CategoriesModule } from './categories/categories.module';
     UsersModule,
     DbModule,
     CategoriesModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [
