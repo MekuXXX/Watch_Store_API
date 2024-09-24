@@ -560,8 +560,27 @@ window.onload = function() {
           "operationId": "UsersController_remove",
           "parameters": [],
           "responses": {
-            "204": {
-              "description": "Delete the user account"
+            "200": {
+              "description": "User deleted successfully",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": true,
+                    "meessage": "User deleted successfully",
+                    "data": {
+                      "user": {
+                        "id": "b9a1761d-58d9-414d-b4c7-d1786ce87853",
+                        "username": "Iris Cruickshank DVM",
+                        "email": "Andreanne68@gmail.com",
+                        "avatar_url": null,
+                        "cover_url": null,
+                        "phone": null,
+                        "role": "user"
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           "tags": [
@@ -726,8 +745,27 @@ window.onload = function() {
             }
           ],
           "responses": {
-            "204": {
-              "description": "Delete any user account by the admin"
+            "200": {
+              "description": "User deleted successfully",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": true,
+                    "meessage": "User deleted successfully",
+                    "data": {
+                      "user": {
+                        "id": "b9a1761d-58d9-414d-b4c7-d1786ce87853",
+                        "username": "Iris Cruickshank DVM",
+                        "email": "Andreanne68@gmail.com",
+                        "avatar_url": null,
+                        "cover_url": null,
+                        "phone": null,
+                        "role": "user"
+                      }
+                    }
+                  }
+                }
+              }
             },
             "401": {
               "description": "Normal user can't hit this route to delete any user",

@@ -1,5 +1,6 @@
 import { pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
+import { product_category } from './pivots/product_category';
 
 export const categories = pgTable('categories', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -10,6 +11,8 @@ export const categories = pgTable('categories', {
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export const categories_rel = relations(categories, ({ one, many }) => ({}));
+export const categories_rel = relations(categories, ({ one, many }) => ({
+  products: many(product_category),
+}));
 
 export type Category = typeof categories.$inferSelect;

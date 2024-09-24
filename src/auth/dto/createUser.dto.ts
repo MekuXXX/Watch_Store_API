@@ -5,6 +5,7 @@ import {
   IsString,
   IsStrongPassword,
   Length,
+  Matches,
 } from 'class-validator';
 
 export class CreateUserDTO {
@@ -22,7 +23,13 @@ export class CreateUserDTO {
   @ApiProperty({ example: 'This is very secret' })
   @IsNotEmpty()
   @IsString()
-  @IsStrongPassword({ minLength: 12 })
-  @Length(12, 20, { message: 'Password has to be between 8 and 20 characters' })
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/,
+    {
+      message:
+        'Password must be 8-20 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+    },
+  )
+  @Length(8, 20, { message: 'Password has to be between 8 and 20 characters' })
   public password: string;
 }

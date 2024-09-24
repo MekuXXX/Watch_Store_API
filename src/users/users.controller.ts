@@ -18,6 +18,7 @@ import {
   ApiBadRequestResponse,
   ApiBody,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -226,9 +227,23 @@ export class UsersController {
     return this.usersService.updatePassword(id, password, updatePasswordDto);
   }
 
-  @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
-    description: 'Delete the user account',
+  @ApiOkResponse({
+    description: 'User deleted successfully',
+    example: {
+      success: true,
+      meessage: 'User deleted successfully',
+      data: {
+        user: {
+          id: 'b9a1761d-58d9-414d-b4c7-d1786ce87853',
+          username: 'Iris Cruickshank DVM',
+          email: 'Andreanne68@gmail.com',
+          avatar_url: null,
+          cover_url: null,
+          phone: null,
+          role: 'user',
+        },
+      },
+    },
   })
   @Delete('current')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -237,9 +252,23 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
-  @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
-    description: 'Delete any user account by the admin',
+  @ApiOkResponse({
+    description: 'User deleted successfully',
+    example: {
+      success: true,
+      meessage: 'User deleted successfully',
+      data: {
+        user: {
+          id: 'b9a1761d-58d9-414d-b4c7-d1786ce87853',
+          username: 'Iris Cruickshank DVM',
+          email: 'Andreanne68@gmail.com',
+          avatar_url: null,
+          cover_url: null,
+          phone: null,
+          role: 'user',
+        },
+      },
+    },
   })
   @ApiNotFoundResponse({
     description: "Can't found the user in the Database",

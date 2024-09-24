@@ -20,6 +20,7 @@ async function main() {
   for (const key of schemaKeys) {
     if (schema[key] instanceof Table) {
       // await db.delete(schema[key]); // clear tables without truncating / resetting ids
+
       await resetTable(db, schema[key]);
     }
   }

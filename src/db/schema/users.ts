@@ -7,7 +7,6 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import * as z from 'zod';
 
 import { activate_tokens } from './activate_tokens';
 import { forget_password_tokens } from './forget_password_tokens';

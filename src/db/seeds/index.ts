@@ -3,3 +3,5 @@ export { default as activateTokens } from './activate_tokens';
 export { default as forgetPasswordTokens } from './forget_password_tokens';
 export { default as userAddresses } from './user_addresses';
 export { default as categories } from './categories';
+export { default as products } from './products';
+export { default as product_category } from './pivots/product_category';

@@ -30,6 +30,7 @@ export class UsersService {
         avatar_url: true,
         cover_url: true,
         phone: true,
+        role: true,
       },
       limit: queries.limit,
       offset: queries.limit * (queries.page - 1),
@@ -67,6 +68,7 @@ export class UsersService {
         avatar_url: true,
         cover_url: true,
         phone: true,
+        role: true,
       },
       with: {
         addresses: true,
@@ -176,13 +178,14 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    const user = await this.db
-      .delete(users)
-      .where(eq(users.id, id))
-      .returning();
+    const user = (
+      await this.db.delete(users).where(eq(users.id, id)).returning()
+    )[0];
 
     if (!user) {
       throw new NotFoundException('User is not exist');
     }
+
+    return { success: true, data: { user } };
   }
 }
