@@ -14,6 +14,7 @@ window.onload = function() {
       "/api": {
         "get": {
           "operationId": "AppController_welcomeMessage",
+          "summary": "Welcome API route for the watch store APIs",
           "parameters": [],
           "responses": {
             "200": {
@@ -38,6 +39,7 @@ window.onload = function() {
       "/api/auth/signup": {
         "post": {
           "operationId": "AuthController_signup",
+          "summary": "User Signup",
           "parameters": [],
           "requestBody": {
             "required": true,
@@ -51,7 +53,7 @@ window.onload = function() {
           },
           "responses": {
             "200": {
-              "description": "Sign up a new user",
+              "description": "User signed up successfully",
               "content": {
                 "application/json": {
                   "schema": {
@@ -64,36 +66,28 @@ window.onload = function() {
               }
             },
             "400": {
-              "description": "The email user tried to create is already exist",
+              "description": "Email is already exists",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Email is already exists"
-                  }
-                }
-              }
-            },
-            "500": {
-              "description": "User not created after hitting the database with the query",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Error happen during creating the user"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Email is already exists"
+                    }
                   }
                 }
               }
             }
           },
           "tags": [
-            "Authentication"
+            "auth"
           ]
         }
       },
       "/api/auth/signin": {
         "post": {
           "operationId": "AuthController_signin",
+          "summary": "User Signin",
           "parameters": [],
           "requestBody": {
             "required": true,
@@ -107,7 +101,7 @@ window.onload = function() {
           },
           "responses": {
             "200": {
-              "description": "Sign in the user to get the credentials",
+              "description": "User signed in successfully",
               "content": {
                 "application/json": {
                   "schema": {
@@ -115,12 +109,12 @@ window.onload = function() {
                       "success": true,
                       "message": "User signed in correctly",
                       "data": {
-                        "token": "cuznt49481209841841stnaitnar",
+                        "token": "jwt-token",
                         "userData": {
-                          "id": "cuzin98424n4l24k4k1l",
-                          "username": "John Doe",
+                          "id": "user-id",
+                          "username": "Youssef",
                           "email": "example@example.com",
-                          "image": "https://image_url.com"
+                          "image": "user-avatar-url"
                         }
                       }
                     }
@@ -129,58 +123,41 @@ window.onload = function() {
               }
             },
             "400": {
-              "description": "User entered wrong credentials email or password",
+              "description": "Incorrect email or password",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Email or Password is not correct"
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "User must activate his account before try to signin",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Activate the account to login"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Email or Password is not correct"
+                    }
                   }
                 }
               }
             },
             "404": {
-              "description": "The email user trying to signin is not exist",
+              "description": "Email does not exist",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Email is not exist"
-                  }
-                }
-              }
-            },
-            "500": {
-              "description": "Error happen that access token for user not created",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "succes": false,
-                    "message": "Error happend during create user session"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Email is not exist"
+                    }
                   }
                 }
               }
             }
           },
           "tags": [
-            "Authentication"
+            "auth"
           ]
         }
       },
       "/api/auth/verify-email/{token}": {
         "post": {
           "operationId": "AuthController_verifyEmail",
+          "summary": "Verify User Email",
           "parameters": [
             {
               "name": "token",
@@ -193,7 +170,7 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": "Activate the user account",
+              "description": "User has been activated successfully",
               "content": {
                 "application/json": {
                   "schema": {
@@ -201,12 +178,13 @@ window.onload = function() {
                       "success": true,
                       "message": "User has been activated successfully",
                       "data": {
-                        "token": "cucze239813098nen23cc",
+                        "token": "jwt-token",
                         "userData": {
-                          "id": "cuzin98424n4l24k4k1l",
-                          "username": "John Doe",
+                          "id": "user-id",
+                          "username": "Youssef",
                           "email": "example@example.com",
-                          "image": "https://image_url.com"
+                          "avatar_url": "user-avatar-url",
+                          "role": "user-role"
                         }
                       }
                     }
@@ -215,36 +193,28 @@ window.onload = function() {
               }
             },
             "400": {
-              "description": "Verifying token is not exist",
+              "description": "The token does not exist or is expired",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "The token is not exist"
-                  }
-                }
-              }
-            },
-            "500": {
-              "description": "Error happen during update the user",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Error happened during verifying the user"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "The token is not exist"
+                    }
                   }
                 }
               }
             }
           },
           "tags": [
-            "Authentication"
+            "auth"
           ]
         }
       },
       "/api/auth/forget-password": {
         "post": {
           "operationId": "AuthController_forgetPassword",
+          "summary": "Request Password Reset",
           "parameters": [],
           "requestBody": {
             "required": true,
@@ -258,49 +228,41 @@ window.onload = function() {
           },
           "responses": {
             "200": {
-              "description": "Send email to reset the user password",
+              "description": "Reset mail has been sent successfully",
               "content": {
                 "application/json": {
                   "schema": {
                     "example": {
                       "success": true,
-                      "message": "Password has been reseted successfully"
+                      "message": "Reset mail has sent successfully"
                     }
                   }
                 }
               }
             },
             "404": {
-              "description": "The email user trying to change the password for is not exist",
+              "description": "Email does not exist",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Email is not exist"
-                  }
-                }
-              }
-            },
-            "500": {
-              "description": "Error happend during creating the user forget password token",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Error happend during in forget password"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Email is not exist"
+                    }
                   }
                 }
               }
             }
           },
           "tags": [
-            "Authentication"
+            "auth"
           ]
         }
       },
       "/api/auth/reset-password/{token}": {
         "post": {
           "operationId": "AuthController_resetPassword",
+          "summary": "Reset User Password",
           "parameters": [
             {
               "name": "token",
@@ -323,49 +285,41 @@ window.onload = function() {
           },
           "responses": {
             "200": {
-              "description": "Update the user password",
+              "description": "Password has been reset successfully",
               "content": {
                 "application/json": {
                   "schema": {
                     "example": {
                       "success": true,
-                      "message": "Reset mail has sent successfully"
+                      "message": "Password has been reseted successfully"
                     }
                   }
                 }
               }
             },
             "400": {
-              "description": "The user entered password different from the confirm password",
+              "description": "Token is not exist or has expired",
               "content": {
                 "application/json": {
-                  "example": {
-                    "status": false,
-                    "message": "Password must be the same as reset password"
-                  }
-                }
-              }
-            },
-            "500": {
-              "description": "The user didn't update correctly",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Error during updating the user"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Token is not exist, Please try again"
+                    }
                   }
                 }
               }
             }
           },
           "tags": [
-            "Authentication"
+            "auth"
           ]
         }
       },
       "/api/auth/validate-reset/{token}": {
         "get": {
           "operationId": "AuthController_validateResetToken",
+          "summary": "Validate Password Reset Token",
           "parameters": [
             {
               "name": "token",
@@ -378,40 +332,73 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": "The token is valid to be used by the user to reset the password",
+              "description": "Token is valid for use",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": true,
-                    "message": "Token is valid to be used"
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Token is valid to be used"
+                    }
                   }
                 }
               }
             },
             "400": {
-              "description": "The token that user user is not exist",
+              "description": "Token is not exist or has expired",
               "content": {
                 "application/json": {
-                  "example": {
-                    "status": false,
-                    "message": "Token is not exist"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Token is expired"
+                    }
                   }
                 }
               }
             }
           },
           "tags": [
-            "Authentication"
+            "auth"
           ]
         }
       },
       "/api/users": {
         "get": {
           "operationId": "UsersController_findAll",
-          "parameters": [],
+          "summary": "Get all users",
+          "parameters": [
+            {
+              "name": "query",
+              "required": true,
+              "in": "query",
+              "example": "John",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "page",
+              "required": true,
+              "in": "query",
+              "example": 1,
+              "schema": {
+                "type": "number"
+              }
+            },
+            {
+              "name": "limit",
+              "required": true,
+              "in": "query",
+              "example": 10,
+              "schema": {
+                "type": "number"
+              }
+            }
+          ],
           "responses": {
             "200": {
-              "description": "Retrieve all categories",
+              "description": "List of users retrieved successfully",
               "content": {
                 "application/json": {
                   "schema": {
@@ -419,16 +406,15 @@ window.onload = function() {
                       "success": true,
                       "message": "Got the users successfully",
                       "data": {
-                        "categories": [
+                        "users": [
                           {
-                            "id": "123",
-                            "name": "Men's",
-                            "cover_url": "https://category_cover_url.com"
-                          },
-                          {
-                            "id": "124",
-                            "name": "Women's",
-                            "cover_url": "https://category_cover_url.com"
+                            "id": "1",
+                            "username": "john_doe",
+                            "email": "john@example.com",
+                            "avatar_url": "http://example.com/avatar.jpg",
+                            "cover_url": "http://example.com/cover.jpg",
+                            "phone": "+123456789",
+                            "role": "user"
                           }
                         ]
                       }
@@ -437,13 +423,15 @@ window.onload = function() {
                 }
               }
             },
-            "401": {
-              "description": "User don't have the permision to access this route or don't provide the access token",
+            "403": {
+              "description": "Forbidden if user is not admin",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Unauthorized"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
                   }
                 }
               }
@@ -457,34 +445,28 @@ window.onload = function() {
       "/api/users/current": {
         "get": {
           "operationId": "UsersController_current",
+          "summary": "Get current user information",
           "parameters": [],
           "responses": {
             "200": {
-              "description": "Get the current user data",
+              "description": "Current user information retrieved successfully",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": true,
-                    "message": "User has been obtained successfully",
-                    "data": {
-                      "userData": {
-                        "id": "custan313128149nisc81",
-                        "username": "John Doe",
-                        "email": "example@example.com",
-                        "avatar_url": "https://image_url.com"
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "User has been obtained successfully",
+                      "data": {
+                        "userData": {
+                          "id": "1",
+                          "username": "john_doe",
+                          "email": "john@example.com",
+                          "avatar_url": "http://example.com/avatar.jpg",
+                          "cover_url": "http://example.com/cover.jpg",
+                          "phone": "+123456789"
+                        }
                       }
                     }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "status": false,
-                    "message": "Unauthorized"
                   }
                 }
               }
@@ -496,9 +478,11 @@ window.onload = function() {
         },
         "patch": {
           "operationId": "UsersController_updateCurrent",
+          "summary": "Update current user information",
           "parameters": [],
           "requestBody": {
             "required": true,
+            "description": "Data for updating user information",
             "content": {
               "application/json": {
                 "schema": {
@@ -509,7 +493,7 @@ window.onload = function() {
           },
           "responses": {
             "200": {
-              "description": "Update the current user data",
+              "description": "User updated successfully",
               "content": {
                 "application/json": {
                   "schema": {
@@ -518,10 +502,12 @@ window.onload = function() {
                       "message": "User has been updated successfully",
                       "data": {
                         "userData": {
-                          "id": "custan313128149nisc81",
-                          "username": "New name",
-                          "email": "example@example.com",
-                          "avatar_url": "https://new_image_url.com"
+                          "id": "1",
+                          "username": "john_updated",
+                          "email": "john_updated@example.com",
+                          "avatar_url": "http://example.com/avatar.jpg",
+                          "cover_url": "http://example.com/cover.jpg",
+                          "phone": "+123456789"
                         }
                       }
                     }
@@ -529,24 +515,15 @@ window.onload = function() {
                 }
               }
             },
-            "400": {
-              "description": "Can't found any data to update user with it",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Must provide a data to update the user"
-                  }
-                }
-              }
-            },
             "404": {
-              "description": "Can't found the user in the Database",
+              "description": "User not found",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "User is not exist"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "User does not exist"
+                    }
                   }
                 }
               }
@@ -558,25 +535,35 @@ window.onload = function() {
         },
         "delete": {
           "operationId": "UsersController_remove",
+          "summary": "Delete current user",
           "parameters": [],
           "responses": {
             "200": {
               "description": "User deleted successfully",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": true,
-                    "meessage": "User deleted successfully",
-                    "data": {
-                      "user": {
-                        "id": "b9a1761d-58d9-414d-b4c7-d1786ce87853",
-                        "username": "Iris Cruickshank DVM",
-                        "email": "Andreanne68@gmail.com",
-                        "avatar_url": null,
-                        "cover_url": null,
-                        "phone": null,
-                        "role": "user"
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "user": {
+                          "id": "1",
+                          "username": "john_doe"
+                        }
                       }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "User not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "User does not exist"
                     }
                   }
                 }
@@ -591,11 +578,13 @@ window.onload = function() {
       "/api/users/{id}": {
         "get": {
           "operationId": "UsersController_findOne",
+          "summary": "Get a user by ID",
           "parameters": [
             {
               "name": "id",
               "required": true,
               "in": "path",
+              "example": "1",
               "schema": {
                 "type": "string"
               }
@@ -603,7 +592,7 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": "Get any user data for admin",
+              "description": "User retrieved successfully",
               "content": {
                 "application/json": {
                   "schema": {
@@ -612,10 +601,13 @@ window.onload = function() {
                       "message": "User has been obtained successfully",
                       "data": {
                         "userData": {
-                          "id": "custan313128149nisc81",
-                          "username": "John Doe",
-                          "email": "example@example.com",
-                          "avatar_url": "https://image_url.com"
+                          "id": "1",
+                          "username": "john_doe",
+                          "email": "john@example.com",
+                          "avatar_url": "http://example.com/avatar.jpg",
+                          "cover_url": "http://example.com/cover.jpg",
+                          "phone": "+123456789",
+                          "addresses": []
                         }
                       }
                     }
@@ -623,24 +615,28 @@ window.onload = function() {
                 }
               }
             },
-            "401": {
-              "description": "Normal user can't hit this route to get any user data",
+            "403": {
+              "description": "Forbidden if user is not admin",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Unauthorized"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
                   }
                 }
               }
             },
             "404": {
-              "description": "Can't found the user in the Database",
+              "description": "User not found",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "User is not exist"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "User does not exist"
+                    }
                   }
                 }
               }
@@ -652,11 +648,13 @@ window.onload = function() {
         },
         "patch": {
           "operationId": "UsersController_updateAdmin",
+          "summary": "Update a user by admin",
           "parameters": [
             {
               "name": "id",
               "required": true,
               "in": "path",
+              "example": "1",
               "schema": {
                 "type": "string"
               }
@@ -664,6 +662,7 @@ window.onload = function() {
           ],
           "requestBody": {
             "required": true,
+            "description": "Data for updating user information",
             "content": {
               "application/json": {
                 "schema": {
@@ -674,7 +673,7 @@ window.onload = function() {
           },
           "responses": {
             "200": {
-              "description": "Update the user data for admin to update any user",
+              "description": "User updated successfully",
               "content": {
                 "application/json": {
                   "schema": {
@@ -683,10 +682,12 @@ window.onload = function() {
                       "message": "User has been updated successfully",
                       "data": {
                         "userData": {
-                          "id": "custan313128149nisc81",
-                          "username": "New name",
-                          "email": "example@example.com",
-                          "avatar_url": "https://new_image_url.com"
+                          "id": "1",
+                          "username": "john_updated",
+                          "email": "john_updated@example.com",
+                          "avatar_url": "http://example.com/avatar.jpg",
+                          "cover_url": "http://example.com/cover.jpg",
+                          "phone": "+123456789"
                         }
                       }
                     }
@@ -694,35 +695,28 @@ window.onload = function() {
                 }
               }
             },
-            "400": {
-              "description": "Can't found any data to update user with it",
+            "403": {
+              "description": "Forbidden if user is not admin",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Must provide a data to update the user"
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "Normal user can't hit this route to update any user",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Unauthorized"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
                   }
                 }
               }
             },
             "404": {
-              "description": "Can't found the user in the Database",
+              "description": "User not found",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "User is not exist"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "User does not exist"
+                    }
                   }
                 }
               }
@@ -734,57 +728,41 @@ window.onload = function() {
         },
         "delete": {
           "operationId": "UsersController_removeAdmin",
+          "summary": "Delete a user by admin",
           "parameters": [
             {
               "name": "id",
               "required": true,
               "in": "path",
+              "example": "1",
               "schema": {
                 "type": "string"
               }
             }
           ],
           "responses": {
-            "200": {
-              "description": "User deleted successfully",
+            "403": {
+              "description": "Forbidden if user is not admin",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": true,
-                    "meessage": "User deleted successfully",
-                    "data": {
-                      "user": {
-                        "id": "b9a1761d-58d9-414d-b4c7-d1786ce87853",
-                        "username": "Iris Cruickshank DVM",
-                        "email": "Andreanne68@gmail.com",
-                        "avatar_url": null,
-                        "cover_url": null,
-                        "phone": null,
-                        "role": "user"
-                      }
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
                     }
                   }
                 }
               }
             },
-            "401": {
-              "description": "Normal user can't hit this route to delete any user",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Unauthorized"
-                  }
-                }
-              }
-            },
             "404": {
-              "description": "Can't found the user in the Database",
+              "description": "User not found",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "User is not exist"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "User does not exist"
+                    }
                   }
                 }
               }
@@ -798,9 +776,11 @@ window.onload = function() {
       "/api/users/current/password": {
         "patch": {
           "operationId": "UsersController_updatePassword",
+          "summary": "Update current user password",
           "parameters": [],
           "requestBody": {
             "required": true,
+            "description": "Data for updating password",
             "content": {
               "application/json": {
                 "schema": {
@@ -811,7 +791,30 @@ window.onload = function() {
           },
           "responses": {
             "200": {
-              "description": ""
+              "description": "Password updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "User password updated successfully"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Old password is wrong",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Old password is wrong"
+                    }
+                  }
+                }
+              }
             }
           },
           "tags": [
@@ -822,6 +825,7 @@ window.onload = function() {
       "/api/categories": {
         "post": {
           "operationId": "CategoriesController_create",
+          "summary": "Create a new category",
           "parameters": [],
           "requestBody": {
             "required": true,
@@ -834,7 +838,7 @@ window.onload = function() {
             }
           },
           "responses": {
-            "201": {
+            "200": {
               "description": "Category created successfully",
               "content": {
                 "application/json": {
@@ -844,9 +848,9 @@ window.onload = function() {
                       "message": "Category created successfully",
                       "data": {
                         "category": {
-                          "id": "123",
-                          "name": "Men's",
-                          "cover_url": "https://category_cover_url.com"
+                          "id": "1",
+                          "name": "Books",
+                          "cover_url": "https://example.com/book-cover.jpg"
                         }
                       }
                     }
@@ -855,12 +859,27 @@ window.onload = function() {
               }
             },
             "400": {
-              "description": "Invalid input data",
+              "description": "Invalid input or missing fields",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Bad request"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Must provide valid data to create a category"
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden resource"
+                    }
                   }
                 }
               }
@@ -872,32 +891,33 @@ window.onload = function() {
         },
         "get": {
           "operationId": "CategoriesController_findAll",
+          "summary": "Get all categories with pagination and search",
           "parameters": [
             {
               "name": "query",
               "required": false,
               "in": "query",
-              "description": "Search query",
+              "description": "Search term to filter categories by name",
               "schema": {}
             },
             {
               "name": "page",
               "required": false,
               "in": "query",
-              "description": "Pagination page",
+              "description": "Page number",
               "schema": {}
             },
             {
               "name": "limit",
               "required": false,
               "in": "query",
-              "description": "Limit the number of results",
+              "description": "Number of categories per page",
               "schema": {}
             }
           ],
           "responses": {
             "200": {
-              "description": "Retrieve all categories",
+              "description": "Categories retrieved successfully",
               "content": {
                 "application/json": {
                   "schema": {
@@ -907,17 +927,25 @@ window.onload = function() {
                       "data": {
                         "categories": [
                           {
-                            "id": "123",
-                            "name": "Men's",
-                            "cover_url": "https://category_cover_url.com"
-                          },
-                          {
-                            "id": "124",
-                            "name": "Women's",
-                            "cover_url": "https://category_cover_url.com"
+                            "id": "1",
+                            "name": "Books",
+                            "cover_url": "https://example.com/book-cover.jpg"
                           }
                         ]
                       }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid query parameters",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Invalid query parameters"
                     }
                   }
                 }
@@ -932,11 +960,13 @@ window.onload = function() {
       "/api/categories/{value}": {
         "get": {
           "operationId": "CategoriesController_findOne",
+          "summary": "Get a category by ID or name",
           "parameters": [
             {
               "name": "value",
               "required": true,
               "in": "path",
+              "description": "ID or name of the category",
               "schema": {
                 "type": "string"
               }
@@ -945,25 +975,30 @@ window.onload = function() {
               "name": "type",
               "required": true,
               "in": "query",
+              "description": "Search category by either id or name",
               "schema": {
+                "enum": [
+                  "id",
+                  "name"
+                ],
                 "type": "string"
               }
             }
           ],
           "responses": {
             "200": {
-              "description": "Retrieve category by ID or name",
+              "description": "Category retrieved successfully",
               "content": {
                 "application/json": {
                   "schema": {
                     "example": {
                       "success": true,
-                      "message": "Category found successfully",
+                      "message": "Getting the category successfully",
                       "data": {
                         "category": {
-                          "id": "123",
-                          "name": "Men's",
-                          "cover_url": "https://category_cover_url.com"
+                          "id": "1",
+                          "name": "Books",
+                          "cover_url": "https://example.com/book-cover.jpg"
                         }
                       }
                     }
@@ -975,9 +1010,11 @@ window.onload = function() {
               "description": "Invalid type query parameter",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Must provide a valid \"type\" query parameter (id or name)"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Must provide the way to find the category"
+                    }
                   }
                 }
               }
@@ -986,9 +1023,11 @@ window.onload = function() {
               "description": "Category not found",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Category not found"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Category is not found"
+                    }
                   }
                 }
               }
@@ -1000,11 +1039,13 @@ window.onload = function() {
         },
         "patch": {
           "operationId": "CategoriesController_update",
+          "summary": "Update a category by ID or name",
           "parameters": [
             {
               "name": "value",
               "required": true,
               "in": "path",
+              "description": "ID or name of the category",
               "schema": {
                 "type": "string"
               }
@@ -1013,7 +1054,12 @@ window.onload = function() {
               "name": "type",
               "required": true,
               "in": "query",
+              "description": "Update category by either id or name",
               "schema": {
+                "enum": [
+                  "id",
+                  "name"
+                ],
                 "type": "string"
               }
             }
@@ -1039,9 +1085,9 @@ window.onload = function() {
                       "message": "Category updated successfully",
                       "data": {
                         "category": {
-                          "id": "123",
-                          "name": "Updated Name",
-                          "cover_url": "https://updated_cover_url.com"
+                          "id": "1",
+                          "name": "Updated Books",
+                          "cover_url": "https://example.com/updated-book-cover.jpg"
                         }
                       }
                     }
@@ -1050,12 +1096,27 @@ window.onload = function() {
               }
             },
             "400": {
-              "description": "Invalid update data",
+              "description": "Missing fields or invalid data",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Must provide valid data to update the category"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Must provide data to update the category"
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden resource"
+                    }
                   }
                 }
               }
@@ -1067,11 +1128,13 @@ window.onload = function() {
         },
         "delete": {
           "operationId": "CategoriesController_remove",
+          "summary": "Delete a category by ID or name",
           "parameters": [
             {
               "name": "value",
               "required": true,
               "in": "path",
+              "description": "ID or name of the category",
               "schema": {
                 "type": "string"
               }
@@ -1080,7 +1143,12 @@ window.onload = function() {
               "name": "type",
               "required": true,
               "in": "query",
+              "description": "Delete category by either id or name",
               "schema": {
+                "enum": [
+                  "id",
+                  "name"
+                ],
                 "type": "string"
               }
             }
@@ -1090,14 +1158,16 @@ window.onload = function() {
               "description": "Category deleted successfully",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": true,
-                    "meessage": "Category deleted successfully",
-                    "data": {
-                      "category": {
-                        "id": "1d432vrad312415134214cvra",
-                        "name": "Men",
-                        "cover": "https://cover_url.com"
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Category deleted successfully",
+                      "data": {
+                        "category": {
+                          "id": "1",
+                          "name": "Books",
+                          "cover_url": "https://example.com/book-cover.jpg"
+                        }
                       }
                     }
                   }
@@ -1105,23 +1175,27 @@ window.onload = function() {
               }
             },
             "400": {
-              "description": "Invalid type for deletion",
+              "description": "Category does not exist",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Must provide a valid \"type\" query parameter (id or name)"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Category does not exist"
+                    }
                   }
                 }
               }
             },
-            "404": {
-              "description": "Category not found",
+            "403": {
+              "description": "Forbidden",
               "content": {
                 "application/json": {
-                  "example": {
-                    "success": false,
-                    "message": "Category is not exist"
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden resource"
+                    }
                   }
                 }
               }
@@ -1170,26 +1244,13 @@ window.onload = function() {
                 }
               }
             },
-            "400": {
-              "description": "Invalid data provided",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Validation failed: name should not be empty"
-                    }
-                  }
-                }
-              }
-            },
             "403": {
               "description": "Forbidden",
               "content": {
                 "application/json": {
                   "schema": {
                     "example": {
-                      "statusCode": 403,
+                      "success": false,
                       "message": "Forbidden resource"
                     }
                   }
@@ -1303,7 +1364,7 @@ window.onload = function() {
                 "application/json": {
                   "schema": {
                     "example": {
-                      "statusCode": 404,
+                      "success": false,
                       "message": "Product is not found"
                     }
                   }
@@ -1362,13 +1423,26 @@ window.onload = function() {
                 }
               }
             },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden resource"
+                    }
+                  }
+                }
+              }
+            },
             "404": {
               "description": "Product not found",
               "content": {
                 "application/json": {
                   "schema": {
                     "example": {
-                      "statusCode": 404,
+                      "success": false,
                       "message": "Product is not found"
                     }
                   }
@@ -1417,13 +1491,26 @@ window.onload = function() {
                 }
               }
             },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden resource"
+                    }
+                  }
+                }
+              }
+            },
             "404": {
               "description": "Product not found",
               "content": {
                 "application/json": {
                   "schema": {
                     "example": {
-                      "statusCode": 404,
+                      "success": false,
                       "message": "Product is not found"
                     }
                   }
@@ -1637,11 +1724,60 @@ window.onload = function() {
         },
         "CreateProductDto": {
           "type": "object",
-          "properties": {}
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "Wireless Headphones"
+            },
+            "description": {
+              "type": "string",
+              "example": "High-quality wireless headphones with noise cancellation."
+            },
+            "image_url": {
+              "type": "string",
+              "example": "https://image_url.com/headphones.jpg"
+            },
+            "quantity": {
+              "type": "number",
+              "example": 50
+            },
+            "price": {
+              "type": "number",
+              "example": 199.99
+            }
+          },
+          "required": [
+            "name",
+            "description",
+            "image_url",
+            "quantity",
+            "price"
+          ]
         },
         "UpdateProductDto": {
           "type": "object",
-          "properties": {}
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "Wireless Headphones"
+            },
+            "description": {
+              "type": "string",
+              "example": "High-quality wireless headphones with noise cancellation."
+            },
+            "image_url": {
+              "type": "string",
+              "example": "https://image_url.com/headphones.jpg"
+            },
+            "quantity": {
+              "type": "number",
+              "example": 50
+            },
+            "price": {
+              "type": "number",
+              "example": 199.99
+            }
+          }
         }
       }
     }

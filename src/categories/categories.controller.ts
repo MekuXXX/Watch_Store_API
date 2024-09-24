@@ -8,34 +8,40 @@ import {
   Delete,
   Query,
   BadRequestException,
-  HttpStatus,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiResponse,
-  ApiBadRequestResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiQuery,
-} from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { QueriesDto } from 'src/dtos/queries.dto';
+import {
+  ApiTags,
+  ApiQuery,
+  ApiBody,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+  ApiBadRequestResponse,
+  ApiOperation,
+  ApiParam,
+  ApiForbiddenResponse,
+} from '@nestjs/swagger';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Roles } from 'src/decorators/role';
 import { Public } from 'src/decorators/public';
-import { QueriesDto } from 'src/dtos/queries.dto';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('Categories')
-@Controller('categories')
 @UseInterceptors(CacheInterceptor)
+@Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Roles(['admin'])
-  @ApiResponse({
-    status: HttpStatus.CREATED,
+  @Post()
+  @ApiOperation({ summary: 'Create a new category' })
+  @ApiBody({
+    type: CreateCategoryDto,
+  })
+  @ApiOkResponse({
     description: 'Category created successfully',
     schema: {
       example: {
@@ -43,30 +49,56 @@ export class CategoriesController {
         message: 'Category created successfully',
         data: {
           category: {
-            id: '123',
-            name: "Men's",
-            cover_url: 'https://category_cover_url.com',
+            id: '1',
+            name: 'Books',
+            cover_url: 'https://example.com/book-cover.jpg',
           },
         },
       },
     },
   })
   @ApiBadRequestResponse({
-    description: 'Invalid input data',
-    example: {
-      success: false,
-      message: 'Bad request',
+    description: 'Invalid input or missing fields',
+    schema: {
+      example: {
+        success: false,
+        message: 'Must provide valid data to create a category',
+      },
     },
   })
-  @Post()
+  @ApiForbiddenResponse({
+    description: 'Forbidden',
+    schema: {
+      example: {
+        success: false,
+        message: 'Forbidden resource',
+      },
+    },
+  })
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.create(createCategoryDto);
   }
 
   @Public()
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Retrieve all categories',
+  @Get()
+  @ApiOperation({ summary: 'Get all categories with pagination and search' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of categories per page',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'query',
+    required: false,
+    description: 'Search term to filter categories by name',
+  })
+  @ApiOkResponse({
+    description: 'Categories retrieved successfully',
     schema: {
       example: {
         success: true,
@@ -74,48 +106,52 @@ export class CategoriesController {
         data: {
           categories: [
             {
-              id: '123',
-              name: "Men's",
-              cover_url: 'https://category_cover_url.com',
-            },
-            {
-              id: '124',
-              name: "Women's",
-              cover_url: 'https://category_cover_url.com',
+              id: '1',
+              name: 'Books',
+              cover_url: 'https://example.com/book-cover.jpg',
             },
           ],
         },
       },
     },
   })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    description: 'Limit the number of results',
+  @ApiBadRequestResponse({
+    description: 'Invalid query parameters',
+    schema: {
+      example: {
+        success: false,
+        message: 'Invalid query parameters',
+      },
+    },
   })
-  @ApiQuery({ name: 'page', required: false, description: 'Pagination page' })
-  @ApiQuery({ name: 'query', required: false, description: 'Search query' })
-  @Get()
-  findAll(
-    @Query()
-    queriesDto: QueriesDto,
-  ) {
+  findAll(@Query() queriesDto: QueriesDto) {
     return this.categoriesService.findAll(queriesDto);
   }
 
   @Public()
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Retrieve category by ID or name',
+  @Get(':value')
+  @ApiOperation({ summary: 'Get a category by ID or name' })
+  @ApiParam({
+    name: 'value',
+    description: 'ID or name of the category',
+  })
+  @ApiQuery({
+    name: 'type',
+    required: true,
+    description: 'Search category by either id or name',
+    enum: ['id', 'name'],
+  })
+  @ApiOkResponse({
+    description: 'Category retrieved successfully',
     schema: {
       example: {
         success: true,
-        message: 'Category found successfully',
+        message: 'Getting the category successfully',
         data: {
           category: {
-            id: '123',
-            name: "Men's",
-            cover_url: 'https://category_cover_url.com',
+            id: '1',
+            name: 'Books',
+            cover_url: 'https://example.com/book-cover.jpg',
           },
         },
       },
@@ -123,19 +159,22 @@ export class CategoriesController {
   })
   @ApiNotFoundResponse({
     description: 'Category not found',
-    example: {
-      success: false,
-      message: 'Category not found',
+    schema: {
+      example: {
+        success: false,
+        message: 'Category is not found',
+      },
     },
   })
   @ApiBadRequestResponse({
     description: 'Invalid type query parameter',
-    example: {
-      success: false,
-      message: 'Must provide a valid "type" query parameter (id or name)',
+    schema: {
+      example: {
+        success: false,
+        message: 'Must provide the way to find the category',
+      },
     },
   })
-  @Get(':value')
   findOne(@Param('value') value: string, @Query('type') type: 'id' | 'name') {
     if (type === 'id' || type === 'name') {
       return this.categoriesService.findOne(type, value);
@@ -144,8 +183,22 @@ export class CategoriesController {
   }
 
   @Roles(['admin'])
-  @ApiResponse({
-    status: HttpStatus.OK,
+  @Patch(':value')
+  @ApiOperation({ summary: 'Update a category by ID or name' })
+  @ApiParam({
+    name: 'value',
+    description: 'ID or name of the category',
+  })
+  @ApiQuery({
+    name: 'type',
+    required: true,
+    description: 'Update category by either id or name',
+    enum: ['id', 'name'],
+  })
+  @ApiBody({
+    type: UpdateCategoryDto,
+  })
+  @ApiOkResponse({
     description: 'Category updated successfully',
     schema: {
       example: {
@@ -153,22 +206,32 @@ export class CategoriesController {
         message: 'Category updated successfully',
         data: {
           category: {
-            id: '123',
-            name: 'Updated Name',
-            cover_url: 'https://updated_cover_url.com',
+            id: '1',
+            name: 'Updated Books',
+            cover_url: 'https://example.com/updated-book-cover.jpg',
           },
         },
       },
     },
   })
-  @ApiBadRequestResponse({
-    description: 'Invalid update data',
-    example: {
-      success: false,
-      message: 'Must provide valid data to update the category',
+  @ApiForbiddenResponse({
+    description: 'Forbidden',
+    schema: {
+      example: {
+        success: false,
+        message: 'Forbidden resource',
+      },
     },
   })
-  @Patch(':value')
+  @ApiBadRequestResponse({
+    description: 'Missing fields or invalid data',
+    schema: {
+      example: {
+        success: false,
+        message: 'Must provide data to update the category',
+      },
+    },
+  })
   update(
     @Param('value') value: string,
     @Query('type') type: 'id' | 'name',
@@ -183,35 +246,52 @@ export class CategoriesController {
   }
 
   @Roles(['admin'])
+  @Delete(':value')
+  @ApiOperation({ summary: 'Delete a category by ID or name' })
+  @ApiParam({
+    name: 'value',
+    description: 'ID or name of the category',
+  })
+  @ApiQuery({
+    name: 'type',
+    required: true,
+    description: 'Delete category by either id or name',
+    enum: ['id', 'name'],
+  })
   @ApiOkResponse({
     description: 'Category deleted successfully',
-    example: {
-      success: true,
-      meessage: 'Category deleted successfully',
-      data: {
-        category: {
-          id: '1d432vrad312415134214cvra',
-          name: 'Men',
-          cover: 'https://cover_url.com',
+    schema: {
+      example: {
+        success: true,
+        message: 'Category deleted successfully',
+        data: {
+          category: {
+            id: '1',
+            name: 'Books',
+            cover_url: 'https://example.com/book-cover.jpg',
+          },
         },
       },
     },
   })
-  @ApiNotFoundResponse({
-    description: 'Category not found',
-    example: {
-      success: false,
-      message: 'Category is not exist',
-    },
-  })
   @ApiBadRequestResponse({
-    description: 'Invalid type for deletion',
-    example: {
-      success: false,
-      message: 'Must provide a valid "type" query parameter (id or name)',
+    description: 'Category does not exist',
+    schema: {
+      example: {
+        success: false,
+        message: 'Category does not exist',
+      },
     },
   })
-  @Delete(':value')
+  @ApiForbiddenResponse({
+    description: 'Forbidden',
+    schema: {
+      example: {
+        success: false,
+        message: 'Forbidden resource',
+      },
+    },
+  })
   remove(@Param('value') value: string, @Query('type') type: 'id' | 'name') {
     if (type === 'id' || type === 'name') {
       return this.categoriesService.remove(type, value);

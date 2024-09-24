@@ -9,7 +9,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { DRIZZLE } from 'src/db/db.module';
 import { DrizzleDB } from 'src/db/drizzle';
-import { categories, categories_rel } from 'src/db/schema';
+import { categories } from 'src/db/schema';
 import { eq, ilike } from 'drizzle-orm';
 import { QueriesDto } from 'src/dtos/queries.dto';
 

@@ -24,7 +24,7 @@ import {
   ApiQuery,
   ApiParam,
   ApiCreatedResponse,
-  ApiBadRequestResponse,
+  ApiBody,
 } from '@nestjs/swagger';
 
 @ApiTags('Products')
@@ -36,6 +36,9 @@ export class ProductsController {
   @Post()
   @Roles(['admin'])
   @ApiOperation({ summary: 'Create a new product' })
+  @ApiBody({
+    type: CreateProductDto,
+  })
   @ApiCreatedResponse({
     description: 'Product created successfully',
     schema: {
@@ -54,20 +57,11 @@ export class ProductsController {
       },
     },
   })
-  @ApiBadRequestResponse({
-    description: 'Invalid data provided',
-    schema: {
-      example: {
-        success: false,
-        message: 'Validation failed: name should not be empty',
-      },
-    },
-  })
   @ApiForbiddenResponse({
     description: 'Forbidden',
     schema: {
       example: {
-        statusCode: 403,
+        success: false,
         message: 'Forbidden resource',
       },
     },
@@ -135,7 +129,7 @@ export class ProductsController {
     description: 'Product not found',
     schema: {
       example: {
-        statusCode: 404,
+        success: false,
         message: 'Product is not found',
       },
     },
@@ -148,6 +142,9 @@ export class ProductsController {
   @Roles(['admin'])
   @ApiOperation({ summary: 'Update a product by ID' })
   @ApiParam({ name: 'id', description: 'Product ID' })
+  @ApiBody({
+    type: UpdateProductDto,
+  })
   @ApiOkResponse({
     description: 'Product updated successfully',
     schema: {
@@ -170,8 +167,17 @@ export class ProductsController {
     description: 'Product not found',
     schema: {
       example: {
-        statusCode: 404,
+        success: false,
         message: 'Product is not found',
+      },
+    },
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden',
+    schema: {
+      example: {
+        success: false,
+        message: 'Forbidden resource',
       },
     },
   })
@@ -205,8 +211,17 @@ export class ProductsController {
     description: 'Product not found',
     schema: {
       example: {
-        statusCode: 404,
+        success: false,
         message: 'Product is not found',
+      },
+    },
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden',
+    schema: {
+      example: {
+        success: false,
+        message: 'Forbidden resource',
       },
     },
   })

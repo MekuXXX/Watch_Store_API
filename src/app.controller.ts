@@ -1,9 +1,12 @@
-import { Controller, Get, HttpStatus } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CacheInterceptor } from '@nestjs/cache-manager';
+import { Controller, Get, HttpStatus, UseInterceptors } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('')
-@ApiTags("Welcome")
+@UseInterceptors(CacheInterceptor)
+@ApiTags('Welcome')
 export class AppController {
+  @ApiOperation({ summary: 'Welcome API route for the watch store APIs' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Welcome API route',

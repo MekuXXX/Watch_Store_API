@@ -6,219 +6,234 @@ import {
   Param,
   Delete,
   Req,
-  HttpStatus,
-  HttpCode,
   UseInterceptors,
   Query,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiQuery,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiParam,
+  ApiForbiddenResponse,
+  ApiBody,
+} from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Request } from 'express';
-import {
-  ApiBadRequestResponse,
-  ApiBody,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { User, User as UserType } from 'src/db/schema';
-import { Roles } from 'src/decorators/role';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { QueriesDto } from 'src/dtos/queries.dto';
+import { Roles } from 'src/decorators/role';
+import { User, User as UserType } from 'src/db/schema';
 
+@ApiTags('Users')
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
-@ApiTags('Users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Roles(['admin'])
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Retrieve all categories',
+  @Get()
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiQuery({ name: 'limit', type: Number, example: 10 })
+  @ApiQuery({ name: 'page', type: Number, example: 1 })
+  @ApiQuery({ name: 'query', type: String, example: 'John' })
+  @ApiOkResponse({
+    description: 'List of users retrieved successfully',
     schema: {
       example: {
         success: true,
         message: 'Got the users successfully',
         data: {
-          categories: [
+          users: [
             {
-              id: '123',
-              name: "Men's",
-              cover_url: 'https://category_cover_url.com',
-            },
-            {
-              id: '124',
-              name: "Women's",
-              cover_url: 'https://category_cover_url.com',
+              id: '1',
+              username: 'john_doe',
+              email: 'john@example.com',
+              avatar_url: 'http://example.com/avatar.jpg',
+              cover_url: 'http://example.com/cover.jpg',
+              phone: '+123456789',
+              role: 'user',
             },
           ],
         },
       },
     },
   })
-  @ApiUnauthorizedResponse({
-    description:
-      "User don't have the permision to access this route or don't provide the access token",
-    example: { success: false, message: 'Unauthorized' },
+  @ApiForbiddenResponse({
+    description: 'Forbidden if user is not admin',
+    schema: {
+      example: { success: false, message: 'Forbidden' },
+    },
   })
-  @Get()
-  findAll(
-    @Query()
-    queriesDto: QueriesDto,
-  ) {
+  findAll(@Query() queriesDto: QueriesDto) {
     return this.usersService.findAll(queriesDto);
   }
 
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Get the current user data',
-    example: {
-      success: true,
-      message: 'User has been obtained successfully',
-      data: {
-        userData: {
-          id: 'custan313128149nisc81',
-          username: 'John Doe',
-          email: 'example@example.com',
-          avatar_url: 'https://image_url.com',
-        },
-      },
-    },
-  })
-  @ApiUnauthorizedResponse({
-    example: { status: false, message: 'Unauthorized' },
-  })
   @Get('current')
-  current(@Req() req: Request) {
-    return this.usersService.current(req.user as UserType);
-  }
-
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Get any user data for admin',
+  @ApiOperation({ summary: 'Get current user information' })
+  @ApiOkResponse({
+    description: 'Current user information retrieved successfully',
     schema: {
       example: {
         success: true,
         message: 'User has been obtained successfully',
         data: {
           userData: {
-            id: 'custan313128149nisc81',
-            username: 'John Doe',
-            email: 'example@example.com',
-            avatar_url: 'https://image_url.com',
+            id: '1',
+            username: 'john_doe',
+            email: 'john@example.com',
+            avatar_url: 'http://example.com/avatar.jpg',
+            cover_url: 'http://example.com/cover.jpg',
+            phone: '+123456789',
+          },
+        },
+      },
+    },
+  })
+  current(@Req() req: Request) {
+    return this.usersService.current(req.user as UserType);
+  }
+
+  @Roles(['admin'])
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a user by ID' })
+  @ApiParam({ name: 'id', type: String, example: '1' })
+  @ApiOkResponse({
+    description: 'User retrieved successfully',
+    schema: {
+      example: {
+        success: true,
+        message: 'User has been obtained successfully',
+        data: {
+          userData: {
+            id: '1',
+            username: 'john_doe',
+            email: 'john@example.com',
+            avatar_url: 'http://example.com/avatar.jpg',
+            cover_url: 'http://example.com/cover.jpg',
+            phone: '+123456789',
+            addresses: [],
           },
         },
       },
     },
   })
   @ApiNotFoundResponse({
-    description: "Can't found the user in the Database",
-    example: {
-      success: false,
-      message: 'User is not exist',
+    description: 'User not found',
+    schema: {
+      example: { success: false, message: 'User does not exist' },
     },
   })
-  @ApiUnauthorizedResponse({
-    description: "Normal user can't hit this route to get any user data",
-    example: {
-      success: false,
-      message: 'Unauthorized',
+  @ApiForbiddenResponse({
+    description: 'Forbidden if user is not admin',
+    schema: {
+      example: { success: false, message: 'Forbidden' },
     },
   })
-  @Get(':id')
-  @Roles(['admin'])
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Update the current user data',
+  @Patch('current')
+  @ApiOperation({ summary: 'Update current user information' })
+  @ApiBody({
+    description: 'Data for updating user information',
+    type: UpdateUserDto,
+  })
+  @ApiOkResponse({
+    description: 'User updated successfully',
     schema: {
       example: {
         success: true,
         message: 'User has been updated successfully',
         data: {
           userData: {
-            id: 'custan313128149nisc81',
-            username: 'New name',
-            email: 'example@example.com',
-            avatar_url: 'https://new_image_url.com',
+            id: '1',
+            username: 'john_updated',
+            email: 'john_updated@example.com',
+            avatar_url: 'http://example.com/avatar.jpg',
+            cover_url: 'http://example.com/cover.jpg',
+            phone: '+123456789',
           },
         },
       },
     },
   })
   @ApiNotFoundResponse({
-    description: "Can't found the user in the Database",
-    example: {
-      success: false,
-      message: 'User is not exist',
+    description: 'User not found',
+    schema: {
+      example: { success: false, message: 'User does not exist' },
     },
   })
-  @ApiBadRequestResponse({
-    description: "Can't found any data to update user with it",
-    example: {
-      success: false,
-      message: 'Must provide a data to update the user',
-    },
-  })
-  @Patch('current')
   updateCurrent(@Req() req: Request, @Body() updateUserDto: UpdateUserDto) {
     const { id } = req.user as UserType;
     return this.usersService.update(id, updateUserDto);
   }
 
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Update the user data for admin to update any user',
+  @Roles(['admin'])
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update a user by admin' })
+  @ApiParam({ name: 'id', type: String, example: '1' })
+  @ApiBody({
+    description: 'Data for updating user information',
+    type: UpdateUserDto,
+  })
+  @ApiOkResponse({
+    description: 'User updated successfully',
     schema: {
       example: {
         success: true,
         message: 'User has been updated successfully',
         data: {
           userData: {
-            id: 'custan313128149nisc81',
-            username: 'New name',
-            email: 'example@example.com',
-            avatar_url: 'https://new_image_url.com',
+            id: '1',
+            username: 'john_updated',
+            email: 'john_updated@example.com',
+            avatar_url: 'http://example.com/avatar.jpg',
+            cover_url: 'http://example.com/cover.jpg',
+            phone: '+123456789',
           },
         },
       },
     },
   })
   @ApiNotFoundResponse({
-    description: "Can't found the user in the Database",
-    example: {
-      success: false,
-      message: 'User is not exist',
+    description: 'User not found',
+    schema: {
+      example: { success: false, message: 'User does not exist' },
     },
   })
-  @ApiBadRequestResponse({
-    description: "Can't found any data to update user with it",
-    example: {
-      success: false,
-      message: 'Must provide a data to update the user',
+  @ApiForbiddenResponse({
+    description: 'Forbidden if user is not admin',
+    schema: {
+      example: { success: false, message: 'Forbidden' },
     },
   })
-  @ApiUnauthorizedResponse({
-    description: "Normal user can't hit this route to update any user",
-    example: {
-      success: false,
-      message: 'Unauthorized',
-    },
-  })
-  @Patch(':id')
-  @Roles(['admin'])
   updateAdmin(@Body() updateUserDto: UpdateUserDto, @Param('id') id: string) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Patch('current/password')
+  @ApiOperation({ summary: 'Update current user password' })
+  @ApiBody({
+    description: 'Data for updating password',
+    type: UpdatePasswordDto,
+  })
+  @ApiOkResponse({
+    description: 'Password updated successfully',
+    schema: {
+      example: { success: true, message: 'User password updated successfully' },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Old password is wrong',
+    schema: {
+      example: { success: false, message: 'Old password is wrong' },
+    },
+  })
   updatePassword(
     @Req() req: Request,
     @Body() updatePasswordDto: UpdatePasswordDto,
@@ -227,66 +242,44 @@ export class UsersController {
     return this.usersService.updatePassword(id, password, updatePasswordDto);
   }
 
+  @Delete('current')
+  @ApiOperation({ summary: 'Delete current user' })
   @ApiOkResponse({
     description: 'User deleted successfully',
-    example: {
-      success: true,
-      meessage: 'User deleted successfully',
-      data: {
-        user: {
-          id: 'b9a1761d-58d9-414d-b4c7-d1786ce87853',
-          username: 'Iris Cruickshank DVM',
-          email: 'Andreanne68@gmail.com',
-          avatar_url: null,
-          cover_url: null,
-          phone: null,
-          role: 'user',
-        },
+    schema: {
+      example: {
+        success: true,
+        data: { user: { id: '1', username: 'john_doe' } },
       },
     },
   })
-  @Delete('current')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNotFoundResponse({
+    description: 'User not found',
+    schema: {
+      example: { success: false, message: 'User does not exist' },
+    },
+  })
   remove(@Req() req: Request) {
     const { id } = req.user as User;
     return this.usersService.remove(id);
   }
 
-  @ApiOkResponse({
-    description: 'User deleted successfully',
-    example: {
-      success: true,
-      meessage: 'User deleted successfully',
-      data: {
-        user: {
-          id: 'b9a1761d-58d9-414d-b4c7-d1786ce87853',
-          username: 'Iris Cruickshank DVM',
-          email: 'Andreanne68@gmail.com',
-          avatar_url: null,
-          cover_url: null,
-          phone: null,
-          role: 'user',
-        },
-      },
+  @Roles(['admin'])
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a user by admin' })
+  @ApiParam({ name: 'id', type: String, example: '1' })
+  @ApiForbiddenResponse({
+    description: 'Forbidden if user is not admin',
+    schema: {
+      example: { success: false, message: 'Forbidden' },
     },
   })
   @ApiNotFoundResponse({
-    description: "Can't found the user in the Database",
-    example: {
-      success: false,
-      message: 'User is not exist',
+    description: 'User not found',
+    schema: {
+      example: { success: false, message: 'User does not exist' },
     },
   })
-  @ApiUnauthorizedResponse({
-    description: "Normal user can't hit this route to delete any user",
-    example: {
-      success: false,
-      message: 'Unauthorized',
-    },
-  })
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @Roles(['admin'])
   removeAdmin(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
