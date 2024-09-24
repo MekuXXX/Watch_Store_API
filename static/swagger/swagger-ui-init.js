@@ -46,7 +46,7 @@ window.onload = function() {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateUserDTO"
+                  "$ref": "#/components/schemas/CreateUserDto"
                 }
               }
             }
@@ -94,7 +94,7 @@ window.onload = function() {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SignInUserDTO"
+                  "$ref": "#/components/schemas/SignInUserDto"
                 }
               }
             }
@@ -221,7 +221,7 @@ window.onload = function() {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ForgetPasswordDTO"
+                  "$ref": "#/components/schemas/ForgetPasswordDto"
                 }
               }
             }
@@ -278,7 +278,7 @@ window.onload = function() {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResetPasswordDTO"
+                  "$ref": "#/components/schemas/ResetPasswordDto"
                 }
               }
             }
@@ -1541,7 +1541,7 @@ window.onload = function() {
         }
       },
       "schemas": {
-        "CreateUserDTO": {
+        "CreateUserDto": {
           "type": "object",
           "properties": {
             "username": {
@@ -1563,7 +1563,7 @@ window.onload = function() {
             "password"
           ]
         },
-        "SignInUserDTO": {
+        "SignInUserDto": {
           "type": "object",
           "properties": {
             "email": {
@@ -1580,7 +1580,7 @@ window.onload = function() {
             "password"
           ]
         },
-        "ForgetPasswordDTO": {
+        "ForgetPasswordDto": {
           "type": "object",
           "properties": {
             "email": {
@@ -1592,7 +1592,7 @@ window.onload = function() {
             "email"
           ]
         },
-        "ResetPasswordDTO": {
+        "ResetPasswordDto": {
           "type": "object",
           "properties": {
             "password": {

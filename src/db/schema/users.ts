@@ -11,6 +11,7 @@ import {
 import { activate_tokens } from './activate_tokens';
 import { forget_password_tokens } from './forget_password_tokens';
 import { user_addresses } from './user_addresses';
+import { user_product } from './pivots/user_product';
 
 export const USER_ROLE = pgEnum('user_role', ['user', 'admin']);
 
@@ -34,6 +35,7 @@ export const users_rel = relations(users, ({ many }) => ({
   activate_tokens: many(activate_tokens),
   forget_password_tokens: many(forget_password_tokens),
   addresses: many(user_addresses),
+  wishlist_products: many(user_product),
 }));
 
 export type User = typeof users.$inferSelect;

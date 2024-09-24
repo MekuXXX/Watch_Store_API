@@ -1,9 +1,5 @@
 import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDTO } from './dto/createUser.dto';
-import { SignInUserDTO } from './dto/signInUser.dto';
-import { ForgetPasswordDTO } from './dto/forgetPassword.dto';
-import { ResetPasswordDTO } from './dto/resetPassword.dto';
 import { Public } from 'src/decorators/public';
 import {
   ApiBody,
@@ -14,6 +10,10 @@ import {
   ApiTags,
   ApiParam,
 } from '@nestjs/swagger';
+import { CreateUserDto } from './dto/createUser.dto';
+import { SignInUserDto } from './dto/signInUser.dto';
+import { ForgetPasswordDto } from './dto/forgetPassword.dto';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
 
 @ApiTags('auth')
 @Public()
@@ -23,7 +23,7 @@ export class AuthController {
 
   @Post('signup')
   @ApiOperation({ summary: 'User Signup' })
-  @ApiBody({ type: CreateUserDTO })
+  @ApiBody({ type: CreateUserDto })
   @ApiOkResponse({
     description: 'User signed up successfully',
     schema: { example: { success: true, message: 'User signed up correctly' } },
@@ -41,13 +41,13 @@ export class AuthController {
       },
     },
   })
-  signup(@Body() createUserDto: CreateUserDTO) {
+  signup(@Body() createUserDto: CreateUserDto) {
     return this.authService.signup(createUserDto);
   }
 
   @Post('signin')
   @ApiOperation({ summary: 'User Signin' })
-  @ApiBody({ type: SignInUserDTO })
+  @ApiBody({ type: SignInUserDto })
   @ApiOkResponse({
     description: 'User signed in successfully',
     schema: {
@@ -76,7 +76,7 @@ export class AuthController {
       example: { success: false, message: 'Email or Password is not correct' },
     },
   })
-  signin(@Body() signInUserDto: SignInUserDTO) {
+  signin(@Body() signInUserDto: SignInUserDto) {
     return this.authService.signin(signInUserDto);
   }
 
@@ -112,7 +112,7 @@ export class AuthController {
 
   @Post('forget-password')
   @ApiOperation({ summary: 'Request Password Reset' })
-  @ApiBody({ type: ForgetPasswordDTO })
+  @ApiBody({ type: ForgetPasswordDto })
   @ApiOkResponse({
     description: 'Reset mail has been sent successfully',
     schema: {
@@ -123,14 +123,14 @@ export class AuthController {
     description: 'Email does not exist',
     schema: { example: { success: false, message: 'Email is not exist' } },
   })
-  forgetPassword(@Body() forgetPasswordDto: ForgetPasswordDTO) {
+  forgetPassword(@Body() forgetPasswordDto: ForgetPasswordDto) {
     return this.authService.forgetPassword(forgetPasswordDto);
   }
 
   @Post('reset-password/:token')
   @ApiOperation({ summary: 'Reset User Password' })
   @ApiParam({ name: 'token', required: true })
-  @ApiBody({ type: ResetPasswordDTO })
+  @ApiBody({ type: ResetPasswordDto })
   @ApiOkResponse({
     description: 'Password has been reset successfully',
     schema: {
@@ -150,7 +150,7 @@ export class AuthController {
     },
   })
   resetPassword(
-    @Body() resetPasswordDto: ResetPasswordDTO,
+    @Body() resetPasswordDto: ResetPasswordDto,
     @Param('token') token: string,
   ) {
     return this.authService.resetPassword(token, resetPasswordDto);

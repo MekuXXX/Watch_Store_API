@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-import { SendMailDTO } from './dto/sendMail.dto';
 import Mail from 'nodemailer/lib/mailer';
+import { SendMailDto } from './dto/sendMail.dto';
 
 @Injectable()
 export class MailerService {
@@ -18,7 +18,7 @@ export class MailerService {
     return transporter;
   }
 
-  async sendMail(data: SendMailDTO) {
+  async sendMail(data: SendMailDto) {
     const { from, html, recipients, text, subject } = data;
     const transporter = this.createTransporter();
 

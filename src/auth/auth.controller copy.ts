@@ -1,17 +1,25 @@
 import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDTO } from './dto/createUser.dto';
-import { SignInUserDTO } from './dto/signInUser.dto';
-import { ForgetPasswordDTO } from './dto/forgetPassword.dto';
-import { ResetPasswordDTO } from './dto/resetPassword.dto';
 import { Public } from 'src/decorators/public';
-import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { CreateUserDto } from './dto/createUser.dto';
+import { SignInUserDto } from './dto/signInUser.dto';
+import { ForgetPasswordDto } from './dto/forgetPassword.dto';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
 
-@ApiTags("Authentication")
+@ApiTags('Authentication')
 @Public()
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @ApiResponse({
     status: HttpStatus.OK,
@@ -24,19 +32,21 @@ export class AuthController {
     },
   })
   @ApiBadRequestResponse({
-    description: "The email user tried to create is already exist", example: {
+    description: 'The email user tried to create is already exist',
+    example: {
       success: false,
       message: 'Email is already exists',
-    }
+    },
   })
   @ApiInternalServerErrorResponse({
-    description: "User not created after hitting the database with the query", example: {
+    description: 'User not created after hitting the database with the query',
+    example: {
       success: false,
-      message: "Error happen during creating the user",
-    }
+      message: 'Error happen during creating the user',
+    },
   })
   @Post('signup')
-  signup(@Body() createUserDto: CreateUserDTO) {
+  signup(@Body() createUserDto: CreateUserDto) {
     return this.authService.signup(createUserDto);
   }
 
@@ -60,34 +70,35 @@ export class AuthController {
     },
   })
   @ApiNotFoundResponse({
-    description: "The email user trying to signin is not exist",
+    description: 'The email user trying to signin is not exist',
     example: {
       success: false,
       message: 'Email is not exist',
-    }
+    },
   })
   @ApiUnauthorizedResponse({
-    description: "User must activate his account before try to signin", example: {
+    description: 'User must activate his account before try to signin',
+    example: {
       success: false,
-      message: "Activate the account to login",
-    }
+      message: 'Activate the account to login',
+    },
   })
   @ApiBadRequestResponse({
-    description: "User entered wrong credentials email or password",
+    description: 'User entered wrong credentials email or password',
     example: {
       success: false,
-      message: "Email or Password is not correct"
-    }
+      message: 'Email or Password is not correct',
+    },
   })
   @ApiInternalServerErrorResponse({
-    description: "Error happen that access token for user not created",
+    description: 'Error happen that access token for user not created',
     example: {
       succes: false,
-      message: "Error happend during create user session"
-    }
+      message: 'Error happend during create user session',
+    },
   })
   @Post('signin')
-  signin(@Body() signInUserDto: SignInUserDTO) {
+  signin(@Body() signInUserDto: SignInUserDto) {
     return this.authService.signin(signInUserDto);
   }
 
@@ -111,32 +122,32 @@ export class AuthController {
     },
   })
   @ApiBadRequestResponse({
-    description: "Verifying token is not exist",
+    description: 'Verifying token is not exist',
     example: {
       success: false,
-      message: "The token is not exist"
-    }
+      message: 'The token is not exist',
+    },
   })
   @ApiBadRequestResponse({
-    description: "Verifying token is expired",
+    description: 'Verifying token is expired',
     example: {
       success: false,
-      message: "Token is expired, We have sent a new one"
-    }
+      message: 'Token is expired, We have sent a new one',
+    },
   })
   @ApiInternalServerErrorResponse({
-    description: "Error happen during update the user",
+    description: 'Error happen during update the user',
     example: {
       success: false,
-      message: "Error happened during verifying the user"
-    }
+      message: 'Error happened during verifying the user',
+    },
   })
   @ApiInternalServerErrorResponse({
-    description: "Error happen that access token for user not created",
+    description: 'Error happen that access token for user not created',
     example: {
       succes: false,
-      message: "Error during creating user session"
-    }
+      message: 'Error during creating user session',
+    },
   })
   @Post('verify-email/:token')
   verifyEmail(@Param('token') token: string) {
@@ -154,21 +165,22 @@ export class AuthController {
     },
   })
   @ApiNotFoundResponse({
-    description: "The email user trying to change the password for is not exist",
+    description:
+      'The email user trying to change the password for is not exist',
     example: {
       success: false,
       message: 'Email is not exist',
-    }
+    },
   })
   @ApiInternalServerErrorResponse({
-    description: "Error happend during creating the user forget password token",
+    description: 'Error happend during creating the user forget password token',
     example: {
       success: false,
-      message: "Error happend during in forget password"
-    }
+      message: 'Error happend during in forget password',
+    },
   })
   @Post('forget-password')
-  forgetPassword(@Body() forgetPasswordDto: ForgetPasswordDTO) {
+  forgetPassword(@Body() forgetPasswordDto: ForgetPasswordDto) {
     return this.authService.forgetPassword(forgetPasswordDto);
   }
 
@@ -183,58 +195,64 @@ export class AuthController {
     },
   })
   @ApiBadRequestResponse({
-    description: "The user entered password different from the confirm password",
+    description:
+      'The user entered password different from the confirm password',
     example: {
       status: false,
-      message: "Password must be the same as reset password",
-    }
+      message: 'Password must be the same as reset password',
+    },
   })
   @ApiBadRequestResponse({
-    description: "The token that user use in resetting the passsword is not exist",
+    description:
+      'The token that user use in resetting the passsword is not exist',
     example: {
       status: false,
-      message: "Password must be the same as reset password",
-    }
+      message: 'Password must be the same as reset password',
+    },
   })
   @ApiBadRequestResponse({
-    description: "The token the user used to reset the password is expired",
+    description: 'The token the user used to reset the password is expired',
     example: {
       status: false,
-      message: "Token is expired, We have sent a new one",
-    }
+      message: 'Token is expired, We have sent a new one',
+    },
   })
   @ApiInternalServerErrorResponse({
     description: "The user didn't update correctly",
     example: {
       success: false,
-      message: "Error during updating the user",
-    }
+      message: 'Error during updating the user',
+    },
   })
   @Post('reset-password/:token')
-  resetPassword(@Body() resetPasswordDto: ResetPasswordDTO, @Param('token') token: string) {
+  resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto,
+    @Param('token') token: string,
+  ) {
     return this.authService.resetPassword(token, resetPasswordDto);
   }
 
   @ApiOkResponse({
-    description: "The token is valid to be used by the user to reset the password",
+    description:
+      'The token is valid to be used by the user to reset the password',
     example: {
       success: true,
-      message: "Token is valid to be used"
-    }
+      message: 'Token is valid to be used',
+    },
   })
   @ApiBadRequestResponse({
-    description: "The token that user user is not exist",
+    description: 'The token that user user is not exist',
     example: {
       status: false,
-      message: "Token is not exist",
-    }
+      message: 'Token is not exist',
+    },
   })
   @ApiBadRequestResponse({
-    description: "The token that used by the user has been used before",
+    description: 'The token that used by the user has been used before',
     example: {
       status: false,
-      message: "Token is expired",
-    }
+      message: 'Token is expired',
+    },
   })
   @Get('validate-reset/:token')
   validateResetToken(@Param('token') token: string) {

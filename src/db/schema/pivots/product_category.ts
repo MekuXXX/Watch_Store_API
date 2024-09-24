@@ -1,4 +1,4 @@
-import { pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, primaryKey, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { categories } from '../categories';
 import { products } from '../products';
 import { relations } from 'drizzle-orm';
@@ -12,6 +12,9 @@ export const product_category = pgTable(
     category_id: uuid('category_id')
       .references(() => categories.id)
       .notNull(),
+
+    created_at: timestamp('created_at').defaultNow().notNull(),
+    updated_at: timestamp('updated_at').defaultNow().notNull(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.category_id, table.product_id] }),

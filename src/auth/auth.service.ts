@@ -22,11 +22,10 @@ import {
 } from 'src/db/schema';
 import { MailerService } from 'src/mailer/mailer.service';
 import env from 'src/utils/env';
-
-import { CreateUserDTO } from './dto/createUser.dto';
-import { ForgetPasswordDTO } from './dto/forgetPassword.dto';
-import { ResetPasswordDTO } from './dto/resetPassword.dto';
-import { SignInUserDTO } from './dto/signInUser.dto';
+import { CreateUserDto } from './dto/createUser.dto';
+import { SignInUserDto } from './dto/signInUser.dto';
+import { ForgetPasswordDto } from './dto/forgetPassword.dto';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +35,7 @@ export class AuthService {
     private mailer: MailerService,
   ) {}
 
-  async signup(userDto: CreateUserDTO) {
+  async signup(userDto: CreateUserDto) {
     const { username, email, password } = userDto;
     const dbUser = await this.db.query.users.findFirst({
       where: (user, { eq }) => eq(user.email, email),
@@ -91,7 +90,7 @@ export class AuthService {
     };
   }
 
-  async signin(userDto: SignInUserDTO) {
+  async signin(userDto: SignInUserDto) {
     const { email, password } = userDto;
     const user = await this.db.query.users.findFirst({
       where: (user, { eq }) => eq(user.email, email),
@@ -237,7 +236,7 @@ export class AuthService {
     };
   }
 
-  async forgetPassword(forgetPasswordDto: ForgetPasswordDTO) {
+  async forgetPassword(forgetPasswordDto: ForgetPasswordDto) {
     const user = await this.db.query.users.findFirst({
       where: (user, { eq }) => eq(user.email, forgetPasswordDto.email),
     });
@@ -275,7 +274,7 @@ export class AuthService {
     return { success: true, message: 'Reset mail has sent successfully' };
   }
 
-  async resetPassword(token: string, resetPasswordDto: ResetPasswordDTO) {
+  async resetPassword(token: string, resetPasswordDto: ResetPasswordDto) {
     const { password, confirmPassword } = resetPasswordDto;
 
     if (password !== confirmPassword) {

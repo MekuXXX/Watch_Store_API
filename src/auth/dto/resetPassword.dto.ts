@@ -6,7 +6,7 @@ import {
   Length,
 } from 'class-validator';
 
-export class ResetPasswordDTO {
+export class ResetPasswordDto {
   @ApiProperty({ example: 'This is very secret' })
   @IsNotEmpty()
   @IsString()

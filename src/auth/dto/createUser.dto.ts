@@ -7,7 +7,7 @@ import {
   Matches,
 } from 'class-validator';
 
-export class CreateUserDTO {
+export class CreateUserDto {
   @ApiProperty({ example: 'Youssef' })
   @IsNotEmpty()
   @IsString()
