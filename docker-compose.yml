@@ -19,8 +19,7 @@ services:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-
-  adminer:
+  dminer:
     image: adminer
     restart: always
     ports:

@@ -825,7 +825,7 @@ window.onload = function() {
       "/api/categories": {
         "post": {
           "operationId": "CategoriesController_create",
-          "summary": "Create a new category",
+          "summary": "Create a new category (Admin only)",
           "parameters": [],
           "requestBody": {
             "required": true,
@@ -1039,7 +1039,7 @@ window.onload = function() {
         },
         "patch": {
           "operationId": "CategoriesController_update",
-          "summary": "Update a category by ID or name",
+          "summary": "Update a category by ID or name (Admin only)",
           "parameters": [
             {
               "name": "value",
@@ -1128,7 +1128,7 @@ window.onload = function() {
         },
         "delete": {
           "operationId": "CategoriesController_remove",
-          "summary": "Delete a category by ID or name",
+          "summary": "Delete a category by ID or name (Admin only)",
           "parameters": [
             {
               "name": "value",
@@ -1209,7 +1209,7 @@ window.onload = function() {
       "/api/products": {
         "post": {
           "operationId": "ProductsController_create",
-          "summary": "Create a new product",
+          "summary": "Create a new product (Admin only)",
           "parameters": [],
           "requestBody": {
             "required": true,
@@ -1378,7 +1378,7 @@ window.onload = function() {
         },
         "patch": {
           "operationId": "ProductsController_update",
-          "summary": "Update a product by ID",
+          "summary": "Update a product by ID (Admin only)",
           "parameters": [
             {
               "name": "id",
@@ -1456,7 +1456,7 @@ window.onload = function() {
         },
         "delete": {
           "operationId": "ProductsController_remove",
-          "summary": "Delete a product by ID",
+          "summary": "Delete a product by ID (Admin only)",
           "parameters": [
             {
               "name": "id",
@@ -1520,6 +1520,660 @@ window.onload = function() {
           },
           "tags": [
             "Products"
+          ]
+        }
+      },
+      "/api/wishlists/current": {
+        "get": {
+          "operationId": "WishlistsController_getCurrentUserWishlists",
+          "summary": "Get wishlists of the current user",
+          "parameters": [
+            {
+              "name": "page",
+              "required": true,
+              "in": "query",
+              "example": 1,
+              "schema": {}
+            },
+            {
+              "name": "limit",
+              "required": true,
+              "in": "query",
+              "example": 10,
+              "schema": {}
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved wishlists.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "wishlists": [
+                          {
+                            "product": {
+                              "id": "uuid",
+                              "name": "Product A",
+                              "price": 100
+                            },
+                            "user": {
+                              "id": "uuid",
+                              "username": "User A"
+                            },
+                            "created_at": "2024-09-01T00:00:00.000Z",
+                            "updated_at": "2024-09-01T00:00:00.000Z"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "User is not authenticated.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        },
+        "post": {
+          "operationId": "WishlistsController_createWishlistForCurrentUser",
+          "summary": "Create a wishlist for the current user",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateWishlistDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Wishlist created successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "wishlist": {
+                          "user_id": "uuid",
+                          "product_id": "uuid"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "User or product does not exist.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "User/Product does not exist"
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "User is not authenticated.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        }
+      },
+      "/api/wishlists": {
+        "get": {
+          "operationId": "WishlistsController_getSystemWishlists",
+          "summary": "Get all system wishlists (Admin only)",
+          "parameters": [
+            {
+              "name": "page",
+              "required": true,
+              "in": "query",
+              "example": 1,
+              "schema": {}
+            },
+            {
+              "name": "limit",
+              "required": true,
+              "in": "query",
+              "example": 10,
+              "schema": {}
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved all system wishlists.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "wishlists": []
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "User is not authenticated.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "User is not an admin.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        }
+      },
+      "/api/wishlists/users/{userId}": {
+        "get": {
+          "operationId": "WishlistsController_getUserWishlists",
+          "summary": "Get wishlists of a specific user (Admin only)",
+          "parameters": [
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "example": "uuid",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "page",
+              "required": true,
+              "in": "query",
+              "example": 1,
+              "schema": {}
+            },
+            {
+              "name": "limit",
+              "required": true,
+              "in": "query",
+              "example": 10,
+              "schema": {}
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved user wishlists.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "wishlists": []
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "User is not authenticated.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "User is not an admin.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        }
+      },
+      "/api/wishlists/current/{wishlistId}": {
+        "get": {
+          "operationId": "WishlistsController_getCurrentUserWishlist",
+          "summary": "Get a specific wishlist of the current user",
+          "parameters": [
+            {
+              "name": "wishlistId",
+              "required": true,
+              "in": "path",
+              "example": "uuid",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved wishlist.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "user": {
+                          "id": "uuid",
+                          "username": "User A"
+                        },
+                        "product": {
+                          "id": "uuid",
+                          "name": "Product A"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "User is not authenticated.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Wishlist not found.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Wishlist is not exist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        },
+        "delete": {
+          "operationId": "WishlistsController_deleteCurrentUserWishlist",
+          "summary": "Delete a wishlist for the current user",
+          "parameters": [
+            {
+              "name": "wishlistId",
+              "required": true,
+              "in": "path",
+              "example": "uuid",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Wishlist deleted successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "wishlist": {}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "User is not authenticated.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Wishlist not found.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Wishlist is not exist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        }
+      },
+      "/api/wishlists/{wishlistId}": {
+        "get": {
+          "operationId": "WishlistsController_getUserWishlist",
+          "summary": "Get a specific wishlist (Admin only)",
+          "parameters": [
+            {
+              "name": "wishlistId",
+              "required": true,
+              "in": "path",
+              "example": "uuid",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved wishlist.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "user": {
+                          "id": "uuid",
+                          "username": "User A"
+                        },
+                        "product": {
+                          "id": "uuid",
+                          "name": "Product A"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "User is not authenticated.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "User is not an admin.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Wishlist not found.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Wishlist is not exist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        },
+        "delete": {
+          "operationId": "WishlistsController_deleteUserWishlist",
+          "summary": "Delete a wishlist (Admin only)",
+          "parameters": [
+            {
+              "name": "wishlistId",
+              "required": true,
+              "in": "path",
+              "example": "uuid",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Wishlist deleted successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "wishlist": {}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "User is not authenticated.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "User is not an admin.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Wishlist not found.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Wishlist is not exist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        }
+      },
+      "/api/wishlists/{userId}": {
+        "post": {
+          "operationId": "WishlistsController_createWishlistForUser",
+          "summary": "Create a wishlist for a specific user (Admin only)",
+          "parameters": [
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "example": "afc81383-2f9f-4af9-906e-e8cd09c1d96e",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "productId",
+              "required": true,
+              "in": "query",
+              "example": "afc81383-2f9f-4af9-906e-e8cd09c1d96e",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Wishlist created successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "wishlist": {
+                          "user_id": "uuid",
+                          "product_id": "uuid"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "User or product does not exist.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "User/Product does not exist"
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "User is not authenticated.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "User is not an admin.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
           ]
         }
       }
@@ -1778,6 +2432,23 @@ window.onload = function() {
               "example": 199.99
             }
           }
+        },
+        "CreateWishlistDto": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "example": "123e4567-e89b-12d3-a456-426614174000"
+            },
+            "product_id": {
+              "type": "string",
+              "example": "562e4567-e89b-12d3-a456-897927957937"
+            }
+          },
+          "required": [
+            "user_id",
+            "product_id"
+          ]
         }
       }
     }

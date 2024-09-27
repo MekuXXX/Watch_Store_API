@@ -35,7 +35,7 @@ export class ProductsController {
 
   @Post()
   @Roles(['admin'])
-  @ApiOperation({ summary: 'Create a new product' })
+  @ApiOperation({ summary: 'Create a new product (Admin only)' })
   @ApiBody({
     type: CreateProductDto,
   })
@@ -140,7 +140,7 @@ export class ProductsController {
 
   @Patch(':id')
   @Roles(['admin'])
-  @ApiOperation({ summary: 'Update a product by ID' })
+  @ApiOperation({ summary: 'Update a product by ID (Admin only)' })
   @ApiParam({ name: 'id', description: 'Product ID' })
   @ApiBody({
     type: UpdateProductDto,
@@ -187,7 +187,7 @@ export class ProductsController {
 
   @Delete(':id')
   @Roles(['admin'])
-  @ApiOperation({ summary: 'Delete a product by ID' })
+  @ApiOperation({ summary: 'Delete a product by ID (Admin only)' })
   @ApiParam({ name: 'id', description: 'Product ID' })
   @ApiOkResponse({
     description: 'Product deleted successfully',

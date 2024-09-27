@@ -37,7 +37,7 @@ export class CategoriesController {
 
   @Roles(['admin'])
   @Post()
-  @ApiOperation({ summary: 'Create a new category' })
+  @ApiOperation({ summary: 'Create a new category (Admin only)' })
   @ApiBody({
     type: CreateCategoryDto,
   })
@@ -184,7 +184,7 @@ export class CategoriesController {
 
   @Roles(['admin'])
   @Patch(':value')
-  @ApiOperation({ summary: 'Update a category by ID or name' })
+  @ApiOperation({ summary: 'Update a category by ID or name (Admin only)' })
   @ApiParam({
     name: 'value',
     description: 'ID or name of the category',
@@ -247,7 +247,7 @@ export class CategoriesController {
 
   @Roles(['admin'])
   @Delete(':value')
-  @ApiOperation({ summary: 'Delete a category by ID or name' })
+  @ApiOperation({ summary: 'Delete a category by ID or name (Admin only)' })
   @ApiParam({
     name: 'value',
     description: 'ID or name of the category',
