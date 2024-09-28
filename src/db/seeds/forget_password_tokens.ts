@@ -31,6 +31,6 @@ export default async function seed(db: DrizzleDB) {
 
     await db.insert(forget_password_tokens).values(forgertTokens);
   } catch (error) {
-    throw new Error('Error happen durring seeding of activate tokens');
+    throw new Error('Error happen durring seeding of forget password tokens');
   }
 }

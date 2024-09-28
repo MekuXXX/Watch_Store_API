@@ -30,6 +30,6 @@ export default async function seed(db: DrizzleDB) {
 
     await db.insert(user_addresses).values(addresses);
   } catch (err) {
-    console.log('Error in seeding users: ', err.message);
+    console.log('Error in seeding user addresses: ', err.message);
   }
 }

@@ -2176,6 +2176,147 @@ window.onload = function() {
             "Wishlists"
           ]
         }
+      },
+      "/api/payments/stripe/checkout-session": {
+        "post": {
+          "operationId": "PaymentController_createStripeSession",
+          "summary": "Create a new Stripe checkout session for the user",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "description": "Data required to create a Stripe session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateStripeSessionDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Stripe session created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "session_url": "https://checkout.stripe.com/pay/cs_test_123"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden. User is not authorized to perform this action.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "One of the products does not exist",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "One of the products is not exist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Payments"
+          ]
+        }
+      },
+      "/api/payments/stripe/webhook": {
+        "post": {
+          "operationId": "PaymentController_stripeWebhook",
+          "summary": "Stripe webhook to handle session events",
+          "parameters": [
+            {
+              "name": "stripe-signature",
+              "required": true,
+              "in": "header",
+              "description": "Stripe webhook signature for validation",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "description": "Raw body from Stripe webhook event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "validRequest": {
+                    "summary": "Valid Request",
+                    "value": {
+                      "event": {
+                        "id": "evt_1HKBmB2eZvKYlo2CcA4pmXma",
+                        "type": "checkout.session.completed",
+                        "data": {
+                          "object": {
+                            "metadata": {
+                              "order_id": "order_1Gq2k2eZvKYlo2CC2poHp8n"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Stripe webhook event handled successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Event is handled correctly"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Webhook event is not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Event is not exist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Payments"
+          ]
+        }
       }
     },
     "info": {
@@ -2448,6 +2589,30 @@ window.onload = function() {
           "required": [
             "user_id",
             "product_id"
+          ]
+        },
+        "CreateStripeSessionDto": {
+          "type": "object",
+          "properties": {
+            "cart_items": {
+              "example": [
+                {
+                  "product_id": "3bae0f35-f08f-4086-9169-c9e2036aadc1",
+                  "quantity": 5
+                },
+                {
+                  "product_id": "d4335b9a-2a13-4acf-9dc9-7a565c989585",
+                  "quantity": 3
+                }
+              ],
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "cart_items"
           ]
         }
       }

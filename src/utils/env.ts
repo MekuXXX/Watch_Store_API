@@ -42,6 +42,13 @@ const EnvSchema = z.object({
   APP_MAIL: z.string(),
   APP_CLIENT_URL: z.string(),
 
+  // Stripe
+  STRIPE_SECRET_KEY: z.string(),
+  STRIPE_WEBHOOK_SECRET: z.string(),
+  STRIPE_SUCCESS_URL: z.string(),
+  STRIPE_CANCELED_URL: z.string(),
+  STRIPE_PAYMENT_CURRENCY: z.string(),
+
   // Database
   DB_HOST: z.string().optional(),
   DB_USER: z.string().optional(),
