@@ -2317,6 +2317,360 @@ window.onload = function() {
             "Payments"
           ]
         }
+      },
+      "/api/orders/current": {
+        "get": {
+          "operationId": "OrdersController_findUserAll",
+          "summary": "Get current user orders",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "Got the orders successfully for the current user",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Got the orders successfully",
+                      "data": {
+                        "orders": [
+                          {
+                            "id": "003b8d1d-c261-4f87-8347-0f8116bd86ab",
+                            "user_id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                            "checkout_id": "",
+                            "price": 0,
+                            "status": "shipping",
+                            "created_at": "2024-09-28T15:39:52.701Z",
+                            "updated_at": "2024-09-28T15:39:52.701Z",
+                            "user": {
+                              "id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                              "username": "Mahmoud",
+                              "email": "ridadi4756@sgatra.com",
+                              "avatar_url": null,
+                              "cover_url": null,
+                              "phone": null,
+                              "role": "admin"
+                            },
+                            "order_items": [
+                              {
+                                "product": {
+                                  "id": "b2d652b0-af99-49d5-8dfe-6cfef785d033",
+                                  "name": "Bespoke Fresh Gloves",
+                                  "description": "New ABC 13 9370...",
+                                  "image_url": "https://picsum.photos/seed/aPqsmYPQ/640/480",
+                                  "quantity": 811700361,
+                                  "price": 0.08724776655435562,
+                                  "created_at": "2024-09-28T14:49:31.592Z",
+                                  "updated_at": "2024-09-28T14:49:31.592Z"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Orders"
+          ]
+        }
+      },
+      "/api/orders/{id}": {
+        "get": {
+          "operationId": "OrdersController_findOne",
+          "summary": "Get an order by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "description": "Order ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Got the order successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Gettint the order successfully",
+                      "data": {
+                        "order": {
+                          "id": "003b8d1d-c261-4f87-8347-0f8116bd86ab",
+                          "user_id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                          "checkout_id": "",
+                          "price": 0,
+                          "status": "shipping",
+                          "created_at": "2024-09-28T15:39:52.701Z",
+                          "updated_at": "2024-09-28T15:39:52.701Z",
+                          "user": {
+                            "id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                            "username": "Mahmoud",
+                            "email": "ridadi4756@sgatra.com",
+                            "avatar_url": null,
+                            "cover_url": null,
+                            "phone": null,
+                            "role": "admin"
+                          },
+                          "order_items": [
+                            {
+                              "product": {
+                                "id": "b2d652b0-af99-49d5-8dfe-6cfef785d033",
+                                "name": "Bespoke Fresh Gloves",
+                                "description": "New ABC 13 9370...",
+                                "image_url": "https://picsum.photos/seed/aPqsmYPQ/640/480",
+                                "quantity": 811700361,
+                                "price": 0.08724776655435562,
+                                "created_at": "2024-09-28T14:49:31.592Z",
+                                "updated_at": "2024-09-28T14:49:31.592Z"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden, user is not an admin"
+            }
+          },
+          "tags": [
+            "Orders"
+          ]
+        },
+        "patch": {
+          "operationId": "OrdersController_update",
+          "summary": "Update an order by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "description": "Order ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateOrderDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Updated the order successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Updated the order successfully",
+                      "data": {
+                        "order": {
+                          "id": "003b8d1d-c261-4f87-8347-0f8116bd86ab",
+                          "user_id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                          "checkout_id": "",
+                          "price": 0,
+                          "status": "updated-status",
+                          "created_at": "2024-09-28T15:39:52.701Z",
+                          "updated_at": "2024-09-29T15:39:52.701Z",
+                          "user": {
+                            "id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                            "username": "Mahmoud",
+                            "email": "ridadi4756@sgatra.com",
+                            "avatar_url": null,
+                            "cover_url": null,
+                            "phone": null,
+                            "role": "admin"
+                          },
+                          "order_items": [
+                            {
+                              "product": {
+                                "id": "b2d652b0-af99-49d5-8dfe-6cfef785d033",
+                                "name": "Bespoke Fresh Gloves",
+                                "description": "New ABC 13 9370...",
+                                "image_url": "https://picsum.photos/seed/aPqsmYPQ/640/480",
+                                "quantity": 811700361,
+                                "price": 0.08724776655435562,
+                                "created_at": "2024-09-28T14:49:31.592Z",
+                                "updated_at": "2024-09-28T14:49:31.592Z"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Order not found"
+            }
+          },
+          "tags": [
+            "Orders"
+          ]
+        },
+        "delete": {
+          "operationId": "OrdersController_remove",
+          "summary": "Delete an order by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "description": "Order ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Deleted the order successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Deleted the order successfully",
+                      "data": {
+                        "order": {
+                          "order": {
+                            "id": "003b8d1d-c261-4f87-8347-0f8116bd86ab",
+                            "user_id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                            "checkout_id": "",
+                            "price": 0,
+                            "status": "shipping",
+                            "created_at": "2024-09-28T15:39:52.701Z",
+                            "updated_at": "2024-09-28T15:39:52.701Z",
+                            "user": {
+                              "id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                              "username": "Mahmoud",
+                              "email": "ridadi4756@sgatra.com",
+                              "avatar_url": null,
+                              "cover_url": null,
+                              "phone": null,
+                              "role": "admin"
+                            },
+                            "order_items": [
+                              {
+                                "product": {
+                                  "id": "b2d652b0-af99-49d5-8dfe-6cfef785d033",
+                                  "name": "Bespoke Fresh Gloves",
+                                  "description": "New ABC 13 9370...",
+                                  "image_url": "https://picsum.photos/seed/aPqsmYPQ/640/480",
+                                  "quantity": 811700361,
+                                  "price": 0.08724776655435562,
+                                  "created_at": "2024-09-28T14:49:31.592Z",
+                                  "updated_at": "2024-09-28T14:49:31.592Z"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Order not found"
+            }
+          },
+          "tags": [
+            "Orders"
+          ]
+        }
+      },
+      "/api/orders/current/{id}": {
+        "get": {
+          "operationId": "OrdersController_findUserOrder",
+          "summary": "Get a specific order for the current user",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "description": "Order ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Got the order successfully for the current user",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Gettint the order successfully",
+                      "data": {
+                        "order": {
+                          "id": "003b8d1d-c261-4f87-8347-0f8116bd86ab",
+                          "user_id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                          "checkout_id": "",
+                          "price": 0,
+                          "status": "shipping",
+                          "created_at": "2024-09-28T15:39:52.701Z",
+                          "updated_at": "2024-09-28T15:39:52.701Z",
+                          "user": {
+                            "id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                            "username": "Mahmoud",
+                            "email": "ridadi4756@sgatra.com",
+                            "avatar_url": null,
+                            "cover_url": null,
+                            "phone": null,
+                            "role": "admin"
+                          },
+                          "order_items": [
+                            {
+                              "product": {
+                                "id": "b2d652b0-af99-49d5-8dfe-6cfef785d033",
+                                "name": "Bespoke Fresh Gloves",
+                                "description": "New ABC 13 9370...",
+                                "image_url": "https://picsum.photos/seed/aPqsmYPQ/640/480",
+                                "quantity": 811700361,
+                                "price": 0.08724776655435562,
+                                "created_at": "2024-09-28T14:49:31.592Z",
+                                "updated_at": "2024-09-28T14:49:31.592Z"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Orders"
+          ]
+        }
       }
     },
     "info": {
@@ -2613,6 +2967,24 @@ window.onload = function() {
           },
           "required": [
             "cart_items"
+          ]
+        },
+        "UpdateOrderDto": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "The status of the order",
+              "enum": [
+                "await_payment",
+                "shipping",
+                "finished"
+              ],
+              "example": "shipping"
+            }
+          },
+          "required": [
+            "status"
           ]
         }
       }

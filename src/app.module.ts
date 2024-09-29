@@ -17,6 +17,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 import { WishlistsModule } from './wishlists/wishlists.module';
 import { PaymentModule } from './payment/payment.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { PaymentModule } from './payment/payment.module';
     ProductsModule,
     WishlistsModule,
     PaymentModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [

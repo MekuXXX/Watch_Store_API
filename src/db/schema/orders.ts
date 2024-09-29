@@ -33,7 +33,10 @@ export const orders_rel = relations(orders, ({ one, many }) => ({
     fields: [orders.user_id],
     references: [users.id],
   }),
+
   order_items: many(order_product),
 }));
 
 export type Order = typeof orders.$inferSelect;
+
+export type OrderStatus = (typeof ORDER_STATUS.enumValues)[number];

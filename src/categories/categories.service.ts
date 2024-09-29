@@ -16,6 +16,7 @@ import { QueriesDto } from 'src/dtos/queries.dto';
 @Injectable()
 export class CategoriesService {
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+
   async create(createCategoryDto: CreateCategoryDto) {
     const category = (
       await this.db.insert(categories).values([createCategoryDto]).returning({
