@@ -7,10 +7,10 @@ export const product_category = pgTable(
   'product_category',
   {
     product_id: uuid('product_id')
-      .references(() => products.id)
+      .references(() => products.id, { onDelete: 'cascade' })
       .notNull(),
     category_id: uuid('category_id')
-      .references(() => categories.id)
+      .references(() => categories.id, { onDelete: 'cascade' })
       .notNull(),
 
     created_at: timestamp('created_at').defaultNow().notNull(),

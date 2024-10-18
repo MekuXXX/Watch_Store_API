@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { DrizzleDB } from '../../drizzle';
 import {
+  Order,
   order_product,
   orders,
   product_category,
@@ -26,11 +27,15 @@ export default async function seed(db: DrizzleDB) {
       .values(
         Array(5)
           .fill('')
-          .map((_, index) => ({
-            user_id: user.id,
-            price: faker.number.float({ max: 999999999 }),
-            checkout_id: `${index} ${faker.finance.iban()}`,
-          })),
+          .map(
+            (_, index) =>
+              ({
+                user_id: user.id,
+                price: faker.number.float({ max: 999999999 }),
+                status: Math.random() > 0.5 ? 'cash_delivery' : 'await_payment',
+                checkout_id: `${index} ${faker.finance.iban()}`,
+              }) as Order,
+          ),
       )
       .returning();
 

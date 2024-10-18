@@ -28,7 +28,7 @@ export default async function seed(db: DrizzleDB) {
             description: faker.commerce.productDescription(),
             image_url: faker.image.url(),
             quantity: faker.number.int({ max: 99999999 }),
-            price: faker.number.float({ min: 5 }),
+            price: faker.number.float({ min: 5, max: 99999999 }),
           })),
       )
       .returning();

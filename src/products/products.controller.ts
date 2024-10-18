@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   UseInterceptors,
+  Req,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -25,7 +26,12 @@ import {
   ApiParam,
   ApiCreatedResponse,
   ApiBody,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
+import { SearchProduct } from './dto/search-product.dto';
+import { Public } from 'src/decorators/public';
+import { Request } from 'express';
+import { User } from 'src/db/schema';
 
 @ApiTags('Products')
 @UseInterceptors(CacheInterceptor)
@@ -44,16 +50,36 @@ export class ProductsController {
     schema: {
       example: {
         success: true,
+        message: 'Product created successfully',
         data: {
           product: {
             id: '123e4567-e89b-12d3-a456-426614174000',
-            name: 'Sample Product',
-            description: 'This is a sample product',
-            image_url: 'http://example.com/product.png',
-            quantity: 100,
-            price: 25.5,
+            name: 'Wireless Headphones',
+            description:
+              'High-quality wireless headphones with noise cancellation.',
+            image_url: 'http://example.com/headphones.jpg',
+            quantity: 50,
+            price: 199.99,
           },
         },
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Some category names do not exist',
+    schema: {
+      example: {
+        success: false,
+        message: 'Some category names do not exist',
+      },
+    },
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Error occurred during product creation',
+    schema: {
+      example: {
+        success: false,
+        message: 'Error occurred during product creation: <error message>',
       },
     },
   })
@@ -66,11 +92,10 @@ export class ProductsController {
       },
     },
   })
-  create(@Body() createProductDto: CreateProductDto) {
+  async create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
 
-  @Get()
   @ApiOperation({ summary: 'Retrieve all products' })
   @ApiQuery({
     name: 'limit',
@@ -78,7 +103,27 @@ export class ProductsController {
     description: 'Limit the number of results',
   })
   @ApiQuery({ name: 'page', required: false, description: 'Pagination page' })
-  @ApiQuery({ name: 'query', required: false, description: 'Search query' })
+  @ApiQuery({
+    name: 'query',
+    required: false,
+    description: 'Search in name and description of the product',
+  })
+  @ApiQuery({
+    name: 'minPrice',
+    description: 'Search in with this minimum price',
+  })
+  @ApiQuery({
+    name: 'maxPrice',
+    description: 'Search in with this maximum price',
+  })
+  @ApiQuery({
+    name: 'minQuantity',
+    description: 'Search in with this minimum quantity',
+  })
+  @ApiQuery({
+    name: 'maxQunatity',
+    description: 'Search in with this maximum quantity',
+  })
   @ApiOkResponse({
     description: 'Successfully retrieved products',
     schema: {
@@ -94,17 +139,27 @@ export class ProductsController {
               image_url: 'http://example.com/product.png',
               quantity: 100,
               price: 25.5,
+              categories: ['Electronics', 'Accessories'],
             },
           ],
         },
       },
     },
   })
-  findAll(@Query() queriesDto: QueriesDto) {
-    return this.productsService.findAll(queriesDto);
+  @Get()
+  @Public()
+  findAll(
+    @Query() queriesDto: QueriesDto,
+    @Query() searchProductDto: SearchProduct,
+    @Req() req: Request,
+  ) {
+    return this.productsService.findAll(
+      queriesDto,
+      searchProductDto,
+      req.user as User,
+    );
   }
 
-  @Get(':id')
   @ApiOperation({ summary: 'Retrieve a product by ID' })
   @ApiParam({ name: 'id', description: 'Product ID' })
   @ApiOkResponse({
@@ -120,6 +175,7 @@ export class ProductsController {
             image_url: 'http://example.com/product.png',
             quantity: 100,
             price: 25.5,
+            categories: ['Electronics', 'Accessories'],
           },
         },
       },
@@ -134,6 +190,8 @@ export class ProductsController {
       },
     },
   })
+  @Public()
+  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(id);
   }
@@ -169,6 +227,25 @@ export class ProductsController {
       example: {
         success: false,
         message: 'Product is not found',
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Some category names do not exist',
+    schema: {
+      example: {
+        success: false,
+        message: 'Some category names do not exist',
+      },
+    },
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Error occurred during updating product relations',
+    schema: {
+      example: {
+        success: false,
+        message:
+          'Error occurred during updating product relations: <error message>',
       },
     },
   })

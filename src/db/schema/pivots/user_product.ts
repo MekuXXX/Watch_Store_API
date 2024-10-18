@@ -7,8 +7,12 @@ export const user_product = pgTable(
   'user_product',
   {
     id: uuid('id').defaultRandom().notNull(),
-    user_id: uuid('user_id').references(() => users.id),
-    product_id: uuid('product_id').references(() => products.id),
+    user_id: uuid('user_id').references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+    product_id: uuid('product_id').references(() => products.id, {
+      onDelete: 'cascade',
+    }),
 
     created_at: timestamp('created_at').defaultNow().notNull(),
     updated_at: timestamp('updated_at').defaultNow().notNull(),

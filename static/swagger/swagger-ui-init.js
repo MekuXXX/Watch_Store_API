@@ -1229,14 +1229,15 @@ window.onload = function() {
                   "schema": {
                     "example": {
                       "success": true,
+                      "message": "Product created successfully",
                       "data": {
                         "product": {
                           "id": "123e4567-e89b-12d3-a456-426614174000",
-                          "name": "Sample Product",
-                          "description": "This is a sample product",
-                          "image_url": "http://example.com/product.png",
-                          "quantity": 100,
-                          "price": 25.5
+                          "name": "Wireless Headphones",
+                          "description": "High-quality wireless headphones with noise cancellation.",
+                          "image_url": "http://example.com/headphones.jpg",
+                          "quantity": 50,
+                          "price": 199.99
                         }
                       }
                     }
@@ -1256,6 +1257,32 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "404": {
+              "description": "Some category names do not exist",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Some category names do not exist"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Error occurred during product creation",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Error occurred during product creation: <error message>"
+                    }
+                  }
+                }
+              }
             }
           },
           "tags": [
@@ -1267,10 +1294,69 @@ window.onload = function() {
           "summary": "Retrieve all products",
           "parameters": [
             {
+              "name": "categories",
+              "required": true,
+              "in": "query",
+              "examples": [
+                "man",
+                "women",
+                "man,women"
+              ],
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "minPrice",
+              "required": true,
+              "in": "query",
+              "example": 50,
+              "description": "Search in with this minimum price",
+              "schema": {
+                "type": "number"
+              }
+            },
+            {
+              "name": "maxPrice",
+              "required": true,
+              "in": "query",
+              "example": 999999,
+              "description": "Search in with this maximum price",
+              "schema": {
+                "type": "number"
+              }
+            },
+            {
+              "name": "minQuantity",
+              "required": true,
+              "in": "query",
+              "example": 75,
+              "description": "Search in with this minimum quantity",
+              "schema": {
+                "type": "number"
+              }
+            },
+            {
+              "name": "maxQuantity",
+              "required": true,
+              "in": "query",
+              "example": 750,
+              "schema": {
+                "type": "number"
+              }
+            },
+            {
+              "name": "maxQunatity",
+              "required": true,
+              "in": "query",
+              "description": "Search in with this maximum quantity",
+              "schema": {}
+            },
+            {
               "name": "query",
               "required": false,
               "in": "query",
-              "description": "Search query",
+              "description": "Search in name and description of the product",
               "schema": {}
             },
             {
@@ -1305,7 +1391,11 @@ window.onload = function() {
                             "description": "This is a sample product",
                             "image_url": "http://example.com/product.png",
                             "quantity": 100,
-                            "price": 25.5
+                            "price": 25.5,
+                            "categories": [
+                              "Electronics",
+                              "Accessories"
+                            ]
                           }
                         ]
                       }
@@ -1350,7 +1440,11 @@ window.onload = function() {
                           "description": "This is a sample product",
                           "image_url": "http://example.com/product.png",
                           "quantity": 100,
-                          "price": 25.5
+                          "price": 25.5,
+                          "categories": [
+                            "Electronics",
+                            "Accessories"
+                          ]
                         }
                       }
                     }
@@ -1444,6 +1538,19 @@ window.onload = function() {
                     "example": {
                       "success": false,
                       "message": "Product is not found"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Error occurred during updating product relations",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Error occurred during updating product relations: <error message>"
                     }
                   }
                 }
@@ -2893,6 +3000,24 @@ window.onload = function() {
             "price": {
               "type": "number",
               "example": 199.99
+            },
+            "categories": {
+              "example": [
+                "7b5b7a69-9a10-4a53-8f63-b1e4f487437e",
+                "92b1113c-52e4-46f8-9ae7-b9eb69c1e373"
+              ],
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "category_type": {
+              "type": "string",
+              "example": "id",
+              "enum": [
+                "id",
+                "name"
+              ]
             }
           },
           "required": [
@@ -2900,7 +3025,9 @@ window.onload = function() {
             "description",
             "image_url",
             "quantity",
-            "price"
+            "price",
+            "categories",
+            "category_type"
           ]
         },
         "UpdateProductDto": {
@@ -2925,6 +3052,24 @@ window.onload = function() {
             "price": {
               "type": "number",
               "example": 199.99
+            },
+            "categories": {
+              "example": [
+                "7b5b7a69-9a10-4a53-8f63-b1e4f487437e",
+                "92b1113c-52e4-46f8-9ae7-b9eb69c1e373"
+              ],
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "category_type": {
+              "type": "string",
+              "example": "id",
+              "enum": [
+                "id",
+                "name"
+              ]
             }
           }
         },

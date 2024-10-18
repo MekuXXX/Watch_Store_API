@@ -1,1 +1,0 @@
-ALTER TABLE "user_product" ADD COLUMN "id" uuid DEFAULT gen_random_uuid() NOT NULL;

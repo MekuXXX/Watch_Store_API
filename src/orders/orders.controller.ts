@@ -1,5 +1,4 @@
 import {
-  ApiProperty,
   ApiTags,
   ApiQuery,
   ApiBody,
@@ -18,6 +17,7 @@ import {
   Delete,
   Query,
   Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { QueriesDto } from 'src/dtos/queries.dto';
@@ -25,8 +25,10 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { Roles } from 'src/decorators/role';
 import { Request } from 'express';
 import { User } from 'src/db/schema';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('Orders')
+@UseInterceptors(CacheInterceptor)
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}

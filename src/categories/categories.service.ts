@@ -33,7 +33,7 @@ export class CategoriesService {
     };
   }
 
-  async findAll(queries: QueriesDto) {
+  async findAll(queries: QueriesDto) {  
     const dbCategories = await this.db.query.categories.findMany({
       columns: { id: true, name: true, cover_url: true },
       limit: queries.limit,

@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core';
+import { integer, pgTable, uuid } from 'drizzle-orm/pg-core';
 import { orders } from '../orders';
 import { products } from '../products';
 
@@ -11,7 +11,7 @@ export const order_product = pgTable('order_product', {
 
   product_id: uuid('product_id')
     .notNull()
-    .references(() => products.id),
+    .references(() => products.id, { onDelete: 'cascade' }),
 
   quantity: integer('quantity').notNull(),
 });
