@@ -69,7 +69,7 @@ export class OrdersService {
 
   async findOne(orderId: string, userId?: string) {
     const order = await this.db.query.orders.findFirst({
-      where: (category, { eq }) => eq(category.id, orderId),
+      where: (order, { eq }) => eq(order.id, orderId),
       with: {
         user: {
           columns: {
@@ -91,12 +91,8 @@ export class OrdersService {
       },
     });
 
-    if (!order) {
-      throw new NotFoundException('Order is not found');
-    }
-
-    if (order && order.user_id !== userId) {
-      throw new NotFoundException('Order is not found');
+    if (!order || order.user_id !== userId) {
+      throw new NotFoundException('Checkout data is not exist');
     }
 
     return {

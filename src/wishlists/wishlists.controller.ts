@@ -74,7 +74,62 @@ export class WishlistsController {
   @ApiQuery({ name: 'page', example: 1 })
   @ApiOkResponse({
     description: 'Successfully retrieved all system wishlists.',
-    schema: { example: { success: true, data: { wishlists: [] } } },
+    schema: {
+      example: {
+        success: true,
+        data: {
+          wishlists: [
+            {
+              id: '52827b32-9182-46c1-a622-d6296fe4500f',
+              created_at: '2024-10-14T12:23:34.752Z',
+              updated_at: '2024-10-14T12:23:34.752Z',
+              product: {
+                id: 'b7d1ac0f-fd98-4a29-aad0-e8afc41a6ea7',
+                name: 'Bespoke Concrete Chips',
+                description:
+                  'New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016',
+                image_url:
+                  'https://loremflickr.com/640/480?lock=819500450578432',
+                price: 33123886.733985655,
+                quantity: 44228475,
+              },
+              user: {
+                id: 'b00a29a9-5bf2-4a5b-a08d-d0c915b60395',
+                username: 'Dan Miller',
+                email: 'Dagmar57@yahoo.com',
+                avatar_url: null,
+                cover_url: null,
+                phone: null,
+                role: 'user',
+              },
+            },
+            {
+              id: 'c37c07e1-ad93-4c70-9a41-4690b8f234aa',
+              created_at: '2024-10-14T12:23:34.752Z',
+              updated_at: '2024-10-14T12:23:34.752Z',
+              product: {
+                id: '9a813d27-7682-4d8b-b290-be28b751ff2b',
+                name: 'Sleek Bronze Salad',
+                description:
+                  'New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016',
+                image_url: 'https://picsum.photos/seed/UVsE6nHQM/640/480',
+                price: 88911873.5358168,
+                quantity: 79060905,
+              },
+              user: {
+                id: 'b00a29a9-5bf2-4a5b-a08d-d0c915b60395',
+                username: 'Dan Miller',
+                email: 'Dagmar57@yahoo.com',
+                avatar_url: null,
+                cover_url: null,
+                phone: null,
+                role: 'user',
+              },
+            },
+          ],
+        },
+      },
+    },
   })
   @ApiForbiddenResponse({
     description: 'User is not an admin.',
@@ -95,8 +150,63 @@ export class WishlistsController {
   @ApiQuery({ name: 'limit', example: 10 })
   @ApiQuery({ name: 'page', example: 1 })
   @ApiOkResponse({
-    description: 'Successfully retrieved user wishlists.',
-    schema: { example: { success: true, data: { wishlists: [] } } },
+    description: 'Successfully retrieved all system wishlists.',
+    schema: {
+      example: {
+        success: true,
+        data: {
+          wishlists: [
+            {
+              id: '52827b32-9182-46c1-a622-d6296fe4500f',
+              created_at: '2024-10-14T12:23:34.752Z',
+              updated_at: '2024-10-14T12:23:34.752Z',
+              product: {
+                id: 'b7d1ac0f-fd98-4a29-aad0-e8afc41a6ea7',
+                name: 'Bespoke Concrete Chips',
+                description:
+                  'New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016',
+                image_url:
+                  'https://loremflickr.com/640/480?lock=819500450578432',
+                price: 33123886.733985655,
+                quantity: 44228475,
+              },
+              user: {
+                id: 'b00a29a9-5bf2-4a5b-a08d-d0c915b60395',
+                username: 'Dan Miller',
+                email: 'Dagmar57@yahoo.com',
+                avatar_url: null,
+                cover_url: null,
+                phone: null,
+                role: 'user',
+              },
+            },
+            {
+              id: 'c37c07e1-ad93-4c70-9a41-4690b8f234aa',
+              created_at: '2024-10-14T12:23:34.752Z',
+              updated_at: '2024-10-14T12:23:34.752Z',
+              product: {
+                id: '9a813d27-7682-4d8b-b290-be28b751ff2b',
+                name: 'Sleek Bronze Salad',
+                description:
+                  'New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016',
+                image_url: 'https://picsum.photos/seed/UVsE6nHQM/640/480',
+                price: 88911873.5358168,
+                quantity: 79060905,
+              },
+              user: {
+                id: 'b00a29a9-5bf2-4a5b-a08d-d0c915b60395',
+                username: 'Dan Miller',
+                email: 'Dagmar57@yahoo.com',
+                avatar_url: null,
+                cover_url: null,
+                phone: null,
+                role: 'user',
+              },
+            },
+          ],
+        },
+      },
+    },
   })
   @ApiForbiddenResponse({
     description: 'User is not an admin.',
@@ -213,8 +323,18 @@ export class WishlistsController {
   @ApiOperation({
     summary: 'Create a wishlist for a specific user (Admin only)',
   })
-  @ApiParam({ name: 'userId', type: 'string', required: true, example: 'afc81383-2f9f-4af9-906e-e8cd09c1d96e' })
-  @ApiQuery({ name: 'productId', type: 'string', required: true, example: 'afc81383-2f9f-4af9-906e-e8cd09c1d96e' })
+  @ApiParam({
+    name: 'userId',
+    type: 'string',
+    required: true,
+    example: 'afc81383-2f9f-4af9-906e-e8cd09c1d96e',
+  })
+  @ApiQuery({
+    name: 'productId',
+    type: 'string',
+    required: true,
+    example: 'afc81383-2f9f-4af9-906e-e8cd09c1d96e',
+  })
   @ApiCreatedResponse({
     description: 'Wishlist created successfully.',
     schema: {
@@ -243,7 +363,7 @@ export class WishlistsController {
   @Post(':userId')
   createWishlistForUser(
     @Param('userId', ParseUUIDPipe) userId: string,
-    @Query('productId') productId: string
+    @Query('productId') productId: string,
   ) {
     return this.wishlistsService.create(userId, productId);
   }

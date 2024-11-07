@@ -13,6 +13,8 @@ import { order_product } from './pivots/order_product';
 export const ORDER_STATUS = pgEnum('order_status', [
   'await_payment',
   'shipping',
+  'cash_delivery',
+  'preparing',
   'finished',
 ]);
 
@@ -23,7 +25,7 @@ export const orders = pgTable('orders', {
     .references(() => users.id),
   checkout_id: varchar('checkoutId').notNull(),
   price: doublePrecision('price').notNull(),
-  status: ORDER_STATUS('order_status').notNull().default('await_payment'),
+  status: ORDER_STATUS('order_status').notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 });

@@ -3,7 +3,6 @@ import {
   Inject,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { QueriesDto } from 'src/dtos/queries.dto';
@@ -30,7 +29,7 @@ export class WishlistsService {
     const productExists = await this.db
       .select()
       .from(products)
-      .where(eq(products.id, typeof(data) === "string" ? data : data.product_id))
+      .where(eq(products.id, typeof data === 'string' ? data : data.product_id))
       .limit(1);
 
     if (!productExists) {
@@ -38,14 +37,17 @@ export class WishlistsService {
     }
 
     const wishlist = (
-      await this.db.insert(user_product).values({
-        user_id: userId, 
-        product_id: typeof(data) === "string" ? data : data.product_id
-      }).returning({
-        id: user_product.id,
-        user_id: user_product.user_id,
-        product_id: user_product.product_id,
-      })
+      await this.db
+        .insert(user_product)
+        .values({
+          user_id: userId,
+          product_id: typeof data === 'string' ? data : data.product_id,
+        })
+        .returning({
+          id: user_product.id,
+          user_id: user_product.user_id,
+          product_id: user_product.product_id,
+        })
     )[0];
 
     if (!wishlist) {
@@ -95,7 +97,6 @@ export class WishlistsService {
       if (!userExists) {
         throw new BadRequestException('User does not exist');
       }
-      
 
       baseQuery.where(eq(user_product.user_id, userId));
     }
@@ -123,11 +124,11 @@ export class WishlistsService {
     }
 
     const wishlist = await this.db.query.user_product.findFirst({
-      where: (wishlist, {eq}) => eq(wishlist.id, wishlistId),
+      where: (wishlist, { eq }) => eq(wishlist.id, wishlistId),
       columns: {
         id: true,
         created_at: true,
-        updated_at: true
+        updated_at: true,
       },
       with: {
         user: {
@@ -139,7 +140,7 @@ export class WishlistsService {
             cover_url: true,
             phone: true,
             role: true,
-          }, 
+          },
         },
         product: {
           columns: {
@@ -148,12 +149,11 @@ export class WishlistsService {
             description: true,
             image_url: true,
             price: true,
-            quantity: true 
-          }
-        }
-      }
-    })
-
+            quantity: true,
+          },
+        },
+      },
+    });
 
     if (userId) {
       if (wishlist.user.id !== userId) {

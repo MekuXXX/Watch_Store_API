@@ -1792,7 +1792,52 @@ window.onload = function() {
                     "example": {
                       "success": true,
                       "data": {
-                        "wishlists": []
+                        "wishlists": [
+                          {
+                            "id": "52827b32-9182-46c1-a622-d6296fe4500f",
+                            "created_at": "2024-10-14T12:23:34.752Z",
+                            "updated_at": "2024-10-14T12:23:34.752Z",
+                            "product": {
+                              "id": "b7d1ac0f-fd98-4a29-aad0-e8afc41a6ea7",
+                              "name": "Bespoke Concrete Chips",
+                              "description": "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                              "image_url": "https://loremflickr.com/640/480?lock=819500450578432",
+                              "price": 33123886.733985655,
+                              "quantity": 44228475
+                            },
+                            "user": {
+                              "id": "b00a29a9-5bf2-4a5b-a08d-d0c915b60395",
+                              "username": "Dan Miller",
+                              "email": "Dagmar57@yahoo.com",
+                              "avatar_url": null,
+                              "cover_url": null,
+                              "phone": null,
+                              "role": "user"
+                            }
+                          },
+                          {
+                            "id": "c37c07e1-ad93-4c70-9a41-4690b8f234aa",
+                            "created_at": "2024-10-14T12:23:34.752Z",
+                            "updated_at": "2024-10-14T12:23:34.752Z",
+                            "product": {
+                              "id": "9a813d27-7682-4d8b-b290-be28b751ff2b",
+                              "name": "Sleek Bronze Salad",
+                              "description": "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                              "image_url": "https://picsum.photos/seed/UVsE6nHQM/640/480",
+                              "price": 88911873.5358168,
+                              "quantity": 79060905
+                            },
+                            "user": {
+                              "id": "b00a29a9-5bf2-4a5b-a08d-d0c915b60395",
+                              "username": "Dan Miller",
+                              "email": "Dagmar57@yahoo.com",
+                              "avatar_url": null,
+                              "cover_url": null,
+                              "phone": null,
+                              "role": "user"
+                            }
+                          }
+                        ]
                       }
                     }
                   }
@@ -1862,14 +1907,59 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": "Successfully retrieved user wishlists.",
+              "description": "Successfully retrieved all system wishlists.",
               "content": {
                 "application/json": {
                   "schema": {
                     "example": {
                       "success": true,
                       "data": {
-                        "wishlists": []
+                        "wishlists": [
+                          {
+                            "id": "52827b32-9182-46c1-a622-d6296fe4500f",
+                            "created_at": "2024-10-14T12:23:34.752Z",
+                            "updated_at": "2024-10-14T12:23:34.752Z",
+                            "product": {
+                              "id": "b7d1ac0f-fd98-4a29-aad0-e8afc41a6ea7",
+                              "name": "Bespoke Concrete Chips",
+                              "description": "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                              "image_url": "https://loremflickr.com/640/480?lock=819500450578432",
+                              "price": 33123886.733985655,
+                              "quantity": 44228475
+                            },
+                            "user": {
+                              "id": "b00a29a9-5bf2-4a5b-a08d-d0c915b60395",
+                              "username": "Dan Miller",
+                              "email": "Dagmar57@yahoo.com",
+                              "avatar_url": null,
+                              "cover_url": null,
+                              "phone": null,
+                              "role": "user"
+                            }
+                          },
+                          {
+                            "id": "c37c07e1-ad93-4c70-9a41-4690b8f234aa",
+                            "created_at": "2024-10-14T12:23:34.752Z",
+                            "updated_at": "2024-10-14T12:23:34.752Z",
+                            "product": {
+                              "id": "9a813d27-7682-4d8b-b290-be28b751ff2b",
+                              "name": "Sleek Bronze Salad",
+                              "description": "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                              "image_url": "https://picsum.photos/seed/UVsE6nHQM/640/480",
+                              "price": 88911873.5358168,
+                              "quantity": 79060905
+                            },
+                            "user": {
+                              "id": "b00a29a9-5bf2-4a5b-a08d-d0c915b60395",
+                              "username": "Dan Miller",
+                              "email": "Dagmar57@yahoo.com",
+                              "avatar_url": null,
+                              "cover_url": null,
+                              "phone": null,
+                              "role": "user"
+                            }
+                          }
+                        ]
                       }
                     }
                   }
@@ -2295,7 +2385,7 @@ window.onload = function() {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateStripeSessionDto"
+                  "$ref": "#/components/schemas/CreatePaymentOrderDto"
                 }
               }
             }
@@ -2337,6 +2427,102 @@ window.onload = function() {
                     "example": {
                       "success": false,
                       "message": "One of the products is not exist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Payments"
+          ]
+        }
+      },
+      "/api/payments/stripe/checkout-data/{id}": {
+        "get": {
+          "operationId": "PaymentController_stripeSessionData",
+          "summary": "Retrieve Stripe checkout session data by session ID",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "description": "Stripe session ID",
+              "example": "cs_test_a1b2c3d4e5f6g7h8i9j0",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Retrieved checkout data successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Getted the checkout data successfully",
+                      "data": {
+                        "order": {
+                          "id": "003b8d1d-c261-4f87-8347-0f8116bd86ab",
+                          "user_id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                          "checkout_id": "",
+                          "price": 0,
+                          "status": "shipping",
+                          "created_at": "2024-09-28T15:39:52.701Z",
+                          "updated_at": "2024-09-28T15:39:52.701Z",
+                          "user": {
+                            "id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                            "username": "Mahmoud",
+                            "email": "ridadi4756@sgatra.com",
+                            "avatar_url": null,
+                            "cover_url": null,
+                            "phone": null,
+                            "role": "admin"
+                          },
+                          "order_items": [
+                            {
+                              "product": {
+                                "id": "b2d652b0-af99-49d5-8dfe-6cfef785d033",
+                                "name": "Bespoke Fresh Gloves",
+                                "description": "New ABC 13 9370...",
+                                "image_url": "https://picsum.photos/seed/aPqsmYPQ/640/480",
+                                "quantity": 811700361,
+                                "price": 0.08724776655435562,
+                                "created_at": "2024-09-28T14:49:31.592Z",
+                                "updated_at": "2024-09-28T14:49:31.592Z"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Checkout session or associated order not found.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Checkout data is not exist"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error retrieving Stripe checkout session data.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "An error occurred during retrieval"
                     }
                   }
                 }
@@ -2414,6 +2600,73 @@ window.onload = function() {
                     "example": {
                       "success": false,
                       "message": "Event is not exist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Payments"
+          ]
+        }
+      },
+      "/api/payments/cash-delivery": {
+        "post": {
+          "operationId": "PaymentController_cashOnDelivery",
+          "summary": "Create a cash on delivery order",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "description": "Details of the order being created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePaymentOrderDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Order created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Order created successfully",
+                      "data": {
+                        "order": {
+                          "id": "order_1Gq2k2eZvKYlo2CC2poHp8n",
+                          "user_id": "user_1",
+                          "status": "cash_delivery",
+                          "price": 150,
+                          "order_items": [
+                            {
+                              "product_id": "prod_123",
+                              "quantity": 2
+                            },
+                            {
+                              "product_id": "prod_456",
+                              "quantity": 1
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "One of the products does not exist",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "One of the products is not exist"
                     }
                   }
                 }
@@ -2509,7 +2762,7 @@ window.onload = function() {
                   "schema": {
                     "example": {
                       "success": true,
-                      "message": "Gettint the order successfully",
+                      "message": "Getting the order successfully",
                       "data": {
                         "order": {
                           "id": "003b8d1d-c261-4f87-8347-0f8116bd86ab",
@@ -2551,6 +2804,20 @@ window.onload = function() {
             },
             "403": {
               "description": "Forbidden, user is not an admin"
+            },
+            "404": {
+              "description": "Order not found or does not belong to the user",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "statusCode": 404,
+                      "message": "Checkout data is not exist",
+                      "error": "Not Found"
+                    }
+                  }
+                }
+              }
             }
           },
           "tags": [
@@ -2733,7 +3000,7 @@ window.onload = function() {
                   "schema": {
                     "example": {
                       "success": true,
-                      "message": "Gettint the order successfully",
+                      "message": "Getting the order successfully",
                       "data": {
                         "order": {
                           "id": "003b8d1d-c261-4f87-8347-0f8116bd86ab",
@@ -2750,7 +3017,7 @@ window.onload = function() {
                             "avatar_url": null,
                             "cover_url": null,
                             "phone": null,
-                            "role": "admin"
+                            "role": "user"
                           },
                           "order_items": [
                             {
@@ -2768,6 +3035,23 @@ window.onload = function() {
                           ]
                         }
                       }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Unauthorized access, user does not own this order"
+            },
+            "404": {
+              "description": "Order not found or does not belong to the user",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "statusCode": 404,
+                      "message": "Checkout data is not exist",
+                      "error": "Not Found"
                     }
                   }
                 }
@@ -3086,11 +3370,10 @@ window.onload = function() {
             }
           },
           "required": [
-            "user_id",
             "product_id"
           ]
         },
-        "CreateStripeSessionDto": {
+        "CreatePaymentOrderDto": {
           "type": "object",
           "properties": {
             "cart_items": {
@@ -3123,6 +3406,8 @@ window.onload = function() {
               "enum": [
                 "await_payment",
                 "shipping",
+                "cash_delivery",
+                "preparing",
                 "finished"
               ],
               "example": "shipping"

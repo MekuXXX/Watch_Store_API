@@ -16,7 +16,7 @@ import { join } from 'path';
 import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 import { WishlistsModule } from './wishlists/wishlists.module';
-import { PaymentModule } from './payment/payment.module';
+import { PaymentsModule } from './payments/payment.module';
 import { OrdersModule } from './orders/orders.module';
 
 @Module({
@@ -49,7 +49,7 @@ import { OrdersModule } from './orders/orders.module';
     CategoriesModule,
     ProductsModule,
     WishlistsModule,
-    PaymentModule,
+    PaymentsModule,
     OrdersModule,
   ],
   controllers: [AppController],

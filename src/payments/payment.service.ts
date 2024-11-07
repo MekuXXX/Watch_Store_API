@@ -2,9 +2,10 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateStripeSessionDto } from './dto/create-stripe-session.dto';
+import { CreatePaymentOrderDto } from './dto/create-payment-order.dto';
 import Stripe from 'stripe';
 import env from 'src/utils/env';
 import { DRIZZLE } from 'src/db/db.module';
@@ -13,10 +14,12 @@ import { Order, User, order_product, orders, products } from 'src/db/schema';
 import { eq, inArray } from 'drizzle-orm';
 import { CartItemDto } from './dto/cart-item.dto';
 import { MailerService } from 'src/mailer/mailer.service';
+import { PAYMENT_TYPES } from './payment.module';
 
 @Injectable()
-export class PaymentService {
+export class PaymentsService {
   private stripe: Stripe;
+  private logger: Logger;
 
   constructor(
     @Inject(DRIZZLE) private db: DrizzleDB,
@@ -25,13 +28,14 @@ export class PaymentService {
     this.stripe = new Stripe(env.STRIPE_SECRET_KEY, {
       apiVersion: '2024-06-20',
     });
+    this.logger = new Logger();
   }
 
   async createStripeSession(
     user: User,
-    createStripeSessionDto: CreateStripeSessionDto,
+    paymentOrderDto: CreatePaymentOrderDto,
   ) {
-    const cartItemsMap = this.clearCartItems(createStripeSessionDto.cart_items);
+    const cartItemsMap = this.clearCartItems(paymentOrderDto.cart_items);
     const productIds = Array.from(cartItemsMap.keys());
 
     const productsData = await this.db
@@ -45,7 +49,12 @@ export class PaymentService {
       0,
     );
 
-    const order = await this.createOrder(user.id, totalPrice, cartItemsMap);
+    const order = await this.createOrder(
+      user.id,
+      totalPrice,
+      cartItemsMap,
+      PAYMENT_TYPES.STRIPE,
+    );
 
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -79,6 +88,52 @@ export class PaymentService {
       data: {
         session_url: session.url,
       },
+    };
+  }
+
+  async checkoutData(id: string) {
+    let checkoutData: Stripe.Checkout.Session;
+    try {
+      checkoutData = await this.stripe.checkout.sessions.retrieve(id);
+    } catch (error) {
+      this.logger.error(error.message);
+    }
+
+    if (!checkoutData) {
+      throw new NotFoundException('Checkout data is not exist');
+    }
+
+    const order = await this.db.query.orders.findFirst({
+      where: (order, { eq }) => eq(order.id, checkoutData.metadata.order_id),
+      with: {
+        user: {
+          columns: {
+            id: true,
+            username: true,
+            email: true,
+            avatar_url: true,
+            cover_url: true,
+            phone: true,
+            role: true,
+          },
+        },
+        order_items: {
+          columns: {},
+          with: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    if (!order || order.user_id !== checkoutData.metadata.user_id) {
+      throw new NotFoundException('Checkout data is not exist');
+    }
+
+    return {
+      success: true,
+      message: 'Getted the checkout data successfully',
+      data: { order },
     };
   }
 
@@ -143,10 +198,40 @@ export class PaymentService {
     return { success: true, message: 'Event is handled correctly' };
   }
 
+  async cashOnDeliviry(user: User, paymentOrderDto: CreatePaymentOrderDto) {
+    const cartItemsMap = this.clearCartItems(paymentOrderDto.cart_items);
+    const productIds = Array.from(cartItemsMap.keys());
+
+    const productsData = await this.db
+      .select()
+      .from(products)
+      .where(inArray(products.id, productIds));
+
+    const totalPrice = productsData.reduce(
+      (sum, product) =>
+        sum + Math.ceil(product.price) * cartItemsMap.get(product.id).quantity,
+      0,
+    );
+
+    const order = await this.createOrder(
+      user.id,
+      totalPrice,
+      cartItemsMap,
+      PAYMENT_TYPES.CASH_DELIVERY,
+    );
+
+    return {
+      success: true,
+      message: 'Order created successfuly',
+      data: { order },
+    };
+  }
+
   async createOrder(
     userId: string,
     price: number,
     cartItemsMap: Map<string, CartItemDto>,
+    type: PAYMENT_TYPES,
   ) {
     const order = (
       await this.db
@@ -154,8 +239,12 @@ export class PaymentService {
         .values({
           user_id: userId,
           checkout_id: ``,
+          status:
+            type === PAYMENT_TYPES.CASH_DELIVERY
+              ? 'cash_delivery'
+              : 'await_payment',
           price,
-        })
+        } as Order)
         .returning()
     )[0];
 

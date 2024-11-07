@@ -148,7 +148,7 @@ export class OrdersController {
     schema: {
       example: {
         success: true,
-        message: 'Gettint the order successfully',
+        message: 'Getting the order successfully',
         data: {
           order: {
             id: '003b8d1d-c261-4f87-8347-0f8116bd86ab',
@@ -186,6 +186,16 @@ export class OrdersController {
       },
     },
   })
+  @ApiNotFoundResponse({
+    description: 'Order not found or does not belong to the user',
+    schema: {
+      example: {
+        statusCode: 404,
+        message: 'Checkout data is not exist',
+        error: 'Not Found',
+      },
+    },
+  })
   @ApiForbiddenResponse({ description: 'Forbidden, user is not an admin' })
   findOne(@Param('id') orderId: string) {
     return this.ordersService.findOne(orderId);
@@ -199,7 +209,7 @@ export class OrdersController {
     schema: {
       example: {
         success: true,
-        message: 'Gettint the order successfully',
+        message: 'Getting the order successfully',
         data: {
           order: {
             id: '003b8d1d-c261-4f87-8347-0f8116bd86ab',
@@ -216,7 +226,7 @@ export class OrdersController {
               avatar_url: null,
               cover_url: null,
               phone: null,
-              role: 'admin',
+              role: 'user',
             },
             order_items: [
               {
@@ -236,6 +246,19 @@ export class OrdersController {
         },
       },
     },
+  })
+  @ApiNotFoundResponse({
+    description: 'Order not found or does not belong to the user',
+    schema: {
+      example: {
+        statusCode: 404,
+        message: 'Checkout data is not exist',
+        error: 'Not Found',
+      },
+    },
+  })
+  @ApiForbiddenResponse({
+    description: 'Unauthorized access, user does not own this order',
   })
   findUserOrder(@Param('id') orderId: string, @Req() req: Request) {
     const { id } = req.user as User;
