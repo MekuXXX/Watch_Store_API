@@ -18,6 +18,8 @@ import { ProductsModule } from './products/products.module';
 import { WishlistsModule } from './wishlists/wishlists.module';
 import { PaymentsModule } from './payments/payment.module';
 import { OrdersModule } from './orders/orders.module';
+import { CouponsModule } from './coupons/coupons.module';
+import { OthersModule } from './others/others.module';
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { OrdersModule } from './orders/orders.module';
     WishlistsModule,
     PaymentsModule,
     OrdersModule,
+    CouponsModule,
+    OthersModule,
   ],
   controllers: [AppController],
   providers: [

@@ -9,6 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { product_category } from './pivots/product_category';
 import { user_product } from './pivots/user_product';
+import { coupon_product } from './pivots/coupon_products';
 
 export const products = pgTable('products', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -25,6 +26,7 @@ export const products = pgTable('products', {
 export const products_rel = relations(products, ({ one, many }) => ({
   categories: many(product_category),
   wishlisted_users: many(user_product),
+  coupons: many(coupon_product),
 }));
 
 export type Product = typeof products.$inferSelect;

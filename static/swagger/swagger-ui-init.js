@@ -80,7 +80,7 @@ window.onload = function() {
             }
           },
           "tags": [
-            "auth"
+            "Authentication"
           ]
         }
       },
@@ -150,7 +150,7 @@ window.onload = function() {
             }
           },
           "tags": [
-            "auth"
+            "Authentication"
           ]
         }
       },
@@ -207,7 +207,7 @@ window.onload = function() {
             }
           },
           "tags": [
-            "auth"
+            "Authentication"
           ]
         }
       },
@@ -255,7 +255,7 @@ window.onload = function() {
             }
           },
           "tags": [
-            "auth"
+            "Authentication"
           ]
         }
       },
@@ -312,7 +312,7 @@ window.onload = function() {
             }
           },
           "tags": [
-            "auth"
+            "Authentication"
           ]
         }
       },
@@ -359,7 +359,7 @@ window.onload = function() {
             }
           },
           "tags": [
-            "auth"
+            "Authentication"
           ]
         }
       },
@@ -2376,7 +2376,7 @@ window.onload = function() {
       },
       "/api/payments/stripe/checkout-session": {
         "post": {
-          "operationId": "PaymentController_createStripeSession",
+          "operationId": "PaymentsController_createStripeSession",
           "summary": "Create a new Stripe checkout session for the user",
           "parameters": [],
           "requestBody": {
@@ -2440,7 +2440,7 @@ window.onload = function() {
       },
       "/api/payments/stripe/checkout-data/{id}": {
         "get": {
-          "operationId": "PaymentController_stripeSessionData",
+          "operationId": "PaymentsController_stripeSessionData",
           "summary": "Retrieve Stripe checkout session data by session ID",
           "parameters": [
             {
@@ -2536,7 +2536,7 @@ window.onload = function() {
       },
       "/api/payments/stripe/webhook": {
         "post": {
-          "operationId": "PaymentController_stripeWebhook",
+          "operationId": "PaymentsController_stripeWebhook",
           "summary": "Stripe webhook to handle session events",
           "parameters": [
             {
@@ -2613,7 +2613,7 @@ window.onload = function() {
       },
       "/api/payments/cash-delivery": {
         "post": {
-          "operationId": "PaymentController_cashOnDelivery",
+          "operationId": "PaymentsController_cashOnDelivery",
           "summary": "Create a cash on delivery order",
           "parameters": [],
           "requestBody": {
@@ -3062,6 +3062,69 @@ window.onload = function() {
             "Orders"
           ]
         }
+      },
+      "/api/coupons": {
+        "post": {
+          "operationId": "CouponsController_create",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCouponDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/api/others/numbers": {
+        "get": {
+          "operationId": "OthersController_numbers",
+          "summary": "Get the number of wishlists for a specific user",
+          "description": "Returns the total number of wishlists associated with the specified user. Restricted to admin users.",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "The count of wishlists retrieved successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Numbers got successfully",
+                      "data": {
+                        "wishlists": 5
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "User not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "User not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Others"
+          ]
+        }
       }
     },
     "info": {
@@ -3416,6 +3479,10 @@ window.onload = function() {
           "required": [
             "status"
           ]
+        },
+        "CreateCouponDto": {
+          "type": "object",
+          "properties": {}
         }
       }
     }

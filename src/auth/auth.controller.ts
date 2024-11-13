@@ -15,7 +15,7 @@ import { SignInUserDto } from './dto/signInUser.dto';
 import { ForgetPasswordDto } from './dto/forgetPassword.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 
-@ApiTags('auth')
+@ApiTags('Authentication')
 @Public()
 @Controller('auth')
 export class AuthController {

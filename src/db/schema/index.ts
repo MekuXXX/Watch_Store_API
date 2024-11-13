@@ -6,8 +6,10 @@ export * from './user_addresses';
 export * from './categories';
 export * from './products';
 export * from './orders';
+export * from './coupons';
 
 // Pivot Tables
 export * from './pivots/product_category';
 export * from './pivots/user_product';
 export * from './pivots/order_product';
+export * from './pivots/coupon_products';

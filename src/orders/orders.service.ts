@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { and, eq, ilike, or } from 'drizzle-orm';
+import { and, eq, ilike, not, or } from 'drizzle-orm';
 import { DRIZZLE } from 'src/db/db.module';
 import { DrizzleDB } from 'src/db/drizzle';
 import { Order, orders } from 'src/db/schema';
@@ -22,7 +22,7 @@ export class OrdersService {
     if (userId) {
       whereClause.push(
         eq(orders.user_id, userId),
-        or(eq(orders.status, 'shipping'), eq(orders.status, 'finished')),
+        not(eq(orders.status, 'await_payment')),
       );
     }
 
