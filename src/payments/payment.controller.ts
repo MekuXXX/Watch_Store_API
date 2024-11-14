@@ -74,9 +74,11 @@ export class PaymentsController {
     @Req() req: Request,
     @Body() paymentOredrDto: CreatePaymentOrderDto,
   ) {
+    const lang = req.headers['accept-language'];
     return this.paymentService.createStripeSession(
       req.user as User,
       paymentOredrDto,
+      lang,
     );
   }
 

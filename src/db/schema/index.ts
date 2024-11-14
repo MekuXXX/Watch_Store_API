@@ -7,6 +7,7 @@ export * from './categories';
 export * from './products';
 export * from './orders';
 export * from './coupons';
+export * from './configurations';
 
 // Pivot Tables
 export * from './pivots/product_category';

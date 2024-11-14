@@ -1,16 +1,17 @@
-import { Controller, Get, Req, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, Req, UseInterceptors } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiOkResponse,
-  ApiForbiddenResponse,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { OthersService } from './others.service';
 import { Request } from 'express';
 import { User } from 'src/db/schema';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('Others')
+@UseInterceptors(CacheInterceptor)
 @Controller('others')
 export class OthersController {
   constructor(private readonly othersService: OthersService) {}

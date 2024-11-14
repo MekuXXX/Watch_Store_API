@@ -4,10 +4,15 @@ import { ORDER_STATUS, OrderStatus } from 'src/db/schema';
 
 export class UpdateOrderDto {
   @ApiProperty({
-    description: 'The status of the order',
-    enum: ORDER_STATUS.enumValues,
+    description: `The status of the order (${ORDER_STATUS.enumValues.filter((status) => status !== 'await_payment').join(', ')})`,
+    enum: ORDER_STATUS.enumValues.filter(
+      (status) => status !== 'await_payment',
+    ),
     example: 'shipping',
   })
-  @IsIn(ORDER_STATUS.enumValues, { message: 'Invalid order status' })
+  @IsIn(
+    ORDER_STATUS.enumValues.filter((status) => status !== 'await_payment'),
+    { message: 'Invalid order status' },
+  )
   status: OrderStatus;
 }

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from 'src/decorators/public';
 import {
@@ -14,6 +22,7 @@ import { CreateUserDto } from './dto/createUser.dto';
 import { SignInUserDto } from './dto/signInUser.dto';
 import { ForgetPasswordDto } from './dto/forgetPassword.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { Request } from 'express';
 
 @ApiTags('Authentication')
 @Public()
@@ -41,8 +50,9 @@ export class AuthController {
       },
     },
   })
-  signup(@Body() createUserDto: CreateUserDto) {
-    return this.authService.signup(createUserDto);
+  signup(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
+    const lang = req.headers['accept-language'];
+    return this.authService.signup(createUserDto, lang);
   }
 
   @Post('signin')
@@ -106,8 +116,9 @@ export class AuthController {
     description: 'The token does not exist or is expired',
     schema: { example: { success: false, message: 'The token is not exist' } },
   })
-  verifyEmail(@Param('token') token: string) {
-    return this.authService.verifyEmail(token);
+  verifyEmail(@Req() req: Request, @Param('token') token: string) {
+    const lang = req.headers['accept-language'];
+    return this.authService.verifyEmail(token, lang);
   }
 
   @Post('forget-password')
@@ -123,8 +134,12 @@ export class AuthController {
     description: 'Email does not exist',
     schema: { example: { success: false, message: 'Email is not exist' } },
   })
-  forgetPassword(@Body() forgetPasswordDto: ForgetPasswordDto) {
-    return this.authService.forgetPassword(forgetPasswordDto);
+  forgetPassword(
+    @Req() req: Request,
+    @Body() forgetPasswordDto: ForgetPasswordDto,
+  ) {
+    const lang = req.headers['accept-language'];
+    return this.authService.forgetPassword(forgetPasswordDto, lang);
   }
 
   @Post('reset-password/:token')
@@ -150,10 +165,12 @@ export class AuthController {
     },
   })
   resetPassword(
+    @Req() req: Request,
     @Body() resetPasswordDto: ResetPasswordDto,
     @Param('token') token: string,
   ) {
-    return this.authService.resetPassword(token, resetPasswordDto);
+    const lang = req.headers['accept-language'];
+    return this.authService.resetPassword(token, resetPasswordDto, lang);
   }
 
   @Get('validate-reset/:token')

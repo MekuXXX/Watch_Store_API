@@ -15,6 +15,13 @@
       "when": 1730987285990,
       "tag": "0001_new_multiple_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1731599097340,
+      "tag": "0002_aspiring_iron_fist",
+      "breakpoints": true
     }
   ]
 }

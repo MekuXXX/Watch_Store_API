@@ -35,7 +35,7 @@ export class AuthService {
     private mailer: MailerService,
   ) {}
 
-  async signup(userDto: CreateUserDto) {
+  async signup(userDto: CreateUserDto, lang: string) {
     const { username, email, password } = userDto;
     const dbUser = await this.db.query.users.findFirst({
       where: (user, { eq }) => eq(user.email, email),
@@ -79,7 +79,7 @@ export class AuthService {
     await this.mailer.sendMail({
       recipients: [{ name: user.username, address: user.email }],
       subject: 'Verify Watch Store Account',
-      html: `<h1>Verify email: <a href="${env.APP_CLIENT_URL}/verify-email/${
+      html: `<h1>Verify email: <a href="${env.APP_CLIENT_URL}/${lang}/verify-email/${
         token.token
       }">Click here</a></h1>`,
     });
@@ -133,7 +133,7 @@ export class AuthService {
     };
   }
 
-  async verifyEmail(token: string) {
+  async verifyEmail(token: string, lang: string) {
     const dbToken = await this.db.query.activate_tokens.findFirst({
       where: (dbToken, { eq }) => eq(dbToken.token, token),
     });
@@ -169,7 +169,7 @@ export class AuthService {
       await this.mailer.sendMail({
         recipients: [{ name: data.user.username, address: data.user.email }],
         subject: 'Verify Watch Store Account',
-        html: `<h1>Verify email: <a href="${env.APP_CLIENT_URL}/verify-email/${
+        html: `<h1>Verify email: <a href="${env.APP_CLIENT_URL}/${lang}/verify-email/${
           data.activateToken.token
         }">Click here</a></h1>`,
       });
@@ -236,7 +236,7 @@ export class AuthService {
     };
   }
 
-  async forgetPassword(forgetPasswordDto: ForgetPasswordDto) {
+  async forgetPassword(forgetPasswordDto: ForgetPasswordDto, lang: string) {
     const user = await this.db.query.users.findFirst({
       where: (user, { eq }) => eq(user.email, forgetPasswordDto.email),
     });
@@ -266,7 +266,7 @@ export class AuthService {
     await this.mailer.sendMail({
       recipients: [{ name: user.username, address: user.email }],
       subject: 'Forget Password of Watch Store Account',
-      html: `<h1>Forget password: <a href="${env.APP_CLIENT_URL}/reset-password/${
+      html: `<h1>Forget password: <a href="${env.APP_CLIENT_URL}/${lang}/reset-password/${
         forgetToken.token
       }">Click Here</a></h1>`,
     });
@@ -274,7 +274,11 @@ export class AuthService {
     return { success: true, message: 'Reset mail has sent successfully' };
   }
 
-  async resetPassword(token: string, resetPasswordDto: ResetPasswordDto) {
+  async resetPassword(
+    token: string,
+    resetPasswordDto: ResetPasswordDto,
+    lang: string,
+  ) {
     const { password, confirmPassword } = resetPasswordDto;
 
     if (password !== confirmPassword) {
@@ -320,7 +324,7 @@ export class AuthService {
         subject: 'Forget Password of Watch Store Account',
         html: `<h1>Forget password: <a href="${
           env.APP_CLIENT_URL
-        }/reset-password/${data.forgetToken.token}">Click Here</a></h1>`,
+        }/${lang}/reset-password/${data.forgetToken.token}">Click Here</a></h1>`,
       });
 
       throw new BadRequestException('Token is expired, We have sent a new one');

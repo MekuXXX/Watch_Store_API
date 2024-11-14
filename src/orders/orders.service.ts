@@ -102,19 +102,23 @@ export class OrdersService {
     };
   }
 
-  async update(id: string, updateOrderDto: UpdateOrderDto) {
+  async update(id: string, updateOrderDto: UpdateOrderDto, userId?: string) {
+    const whereQueries = [eq(orders.id, id)];
+
+    if (userId) {
+      whereQueries.push(eq(orders.user_id, userId));
+    }
+
     const order = (
       await this.db
         .update(orders)
         .set({ ...updateOrderDto } as Order)
-        .where(eq(orders.id, id))
+        .where(and(...whereQueries))
         .returning()
     )[0];
 
     if (!order) {
-      throw new InternalServerErrorException(
-        'Error happened during updating the order',
-      );
+      throw new NotFoundException('Order is not found');
     }
 
     return {

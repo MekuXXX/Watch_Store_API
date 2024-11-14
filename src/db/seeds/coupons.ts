@@ -6,8 +6,8 @@ export default async function seed(db: DrizzleDB) {
   try {
     const couponData = Array(20)
       .fill('')
-      .map(() => ({
-        coupon: faker.commerce.productName(),
+      .map((_, index: number) => ({
+        coupon: `${index} ${faker.commerce.productName()}`,
         type: faker.helpers.arrayElement(['value', 'percentage']) as CouponType,
         value: faker.number.float({ min: 5, max: 50 }),
         is_active: faker.datatype.boolean(),

@@ -34,6 +34,7 @@ export class PaymentsService {
   async createStripeSession(
     user: User,
     paymentOrderDto: CreatePaymentOrderDto,
+    lang: string,
   ) {
     const cartItemsMap = this.clearCartItems(paymentOrderDto.cart_items);
     const productIds = Array.from(cartItemsMap.keys());
@@ -78,8 +79,8 @@ export class PaymentsService {
       },
 
       mode: 'payment',
-      success_url: env.STRIPE_SUCCESS_URL,
-      cancel_url: env.STRIPE_CANCELED_URL,
+      success_url: `${env.SERVER_URL}/${lang}/${env.STRIPE_SUCCESS_URL}`,
+      cancel_url: `${env.SERVER_URL}/${lang}/${env.STRIPE_CANCELED_URL}`,
       customer_email: user.email,
     });
 

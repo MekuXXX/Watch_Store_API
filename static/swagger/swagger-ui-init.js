@@ -2678,6 +2678,70 @@ window.onload = function() {
           ]
         }
       },
+      "/api/orders": {
+        "get": {
+          "operationId": "OrdersController_findAll",
+          "summary": "Get all orders (Admin)",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "Got the orders successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Got the orders successfully",
+                      "data": {
+                        "orders": [
+                          {
+                            "id": "003b8d1d-c261-4f87-8347-0f8116bd86ab",
+                            "user_id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                            "checkout_id": "",
+                            "price": 0,
+                            "status": "shipping",
+                            "created_at": "2024-09-28T15:39:52.701Z",
+                            "updated_at": "2024-09-28T15:39:52.701Z",
+                            "user": {
+                              "id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                              "username": "Mahmoud",
+                              "email": "ridadi4756@sgatra.com",
+                              "avatar_url": null,
+                              "cover_url": null,
+                              "phone": null,
+                              "role": "admin"
+                            },
+                            "order_items": [
+                              {
+                                "product": {
+                                  "id": "b2d652b0-af99-49d5-8dfe-6cfef785d033",
+                                  "name": "Bespoke Fresh Gloves",
+                                  "description": "New ABC 13 9370...",
+                                  "image_url": "https://picsum.photos/seed/aPqsmYPQ/640/480",
+                                  "quantity": 811700361,
+                                  "price": 0.08724776655435562,
+                                  "created_at": "2024-09-28T14:49:31.592Z",
+                                  "updated_at": "2024-09-28T14:49:31.592Z"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden, user is not an admin"
+            }
+          },
+          "tags": [
+            "Orders"
+          ]
+        }
+      },
       "/api/orders/current": {
         "get": {
           "operationId": "OrdersController_findUserAll",
@@ -2742,7 +2806,7 @@ window.onload = function() {
       "/api/orders/{id}": {
         "get": {
           "operationId": "OrdersController_findOne",
-          "summary": "Get an order by ID",
+          "summary": "Get an order by ID (Admin)",
           "parameters": [
             {
               "name": "id",
@@ -2825,8 +2889,8 @@ window.onload = function() {
           ]
         },
         "patch": {
-          "operationId": "OrdersController_update",
-          "summary": "Update an order by ID",
+          "operationId": "OrdersController_updateAdmin",
+          "summary": "Update an order by ID ( shipping, cash_delivery, preparing, finished, cancelled ) (Admin)",
           "parameters": [
             {
               "name": "id",
@@ -2863,7 +2927,7 @@ window.onload = function() {
                           "user_id": "7854e4d4-344e-4dfd-969c-141060c90c28",
                           "checkout_id": "",
                           "price": 0,
-                          "status": "updated-status",
+                          "status": "preparing",
                           "created_at": "2024-09-28T15:39:52.701Z",
                           "updated_at": "2024-09-29T15:39:52.701Z",
                           "user": {
@@ -3061,6 +3125,86 @@ window.onload = function() {
           "tags": [
             "Orders"
           ]
+        },
+        "patch": {
+          "operationId": "OrdersController_updateUser",
+          "summary": "Update the order status for the current user ( canceled )",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "description": "Order ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateOrderDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Updated the order successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Updated the order successfully",
+                      "data": {
+                        "order": {
+                          "id": "003b8d1d-c261-4f87-8347-0f8116bd86ab",
+                          "user_id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                          "checkout_id": "",
+                          "price": 0,
+                          "status": "cancelled",
+                          "created_at": "2024-09-28T15:39:52.701Z",
+                          "updated_at": "2024-09-29T15:39:52.701Z",
+                          "user": {
+                            "id": "7854e4d4-344e-4dfd-969c-141060c90c28",
+                            "username": "Mahmoud",
+                            "email": "ridadi4756@sgatra.com",
+                            "avatar_url": null,
+                            "cover_url": null,
+                            "phone": null,
+                            "role": "admin"
+                          },
+                          "order_items": [
+                            {
+                              "product": {
+                                "id": "b2d652b0-af99-49d5-8dfe-6cfef785d033",
+                                "name": "Bespoke Fresh Gloves",
+                                "description": "New ABC 13 9370...",
+                                "image_url": "https://picsum.photos/seed/aPqsmYPQ/640/480",
+                                "quantity": 811700361,
+                                "price": 0.08724776655435562,
+                                "created_at": "2024-09-28T14:49:31.592Z",
+                                "updated_at": "2024-09-28T14:49:31.592Z"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Order is not found"
+            }
+          },
+          "tags": [
+            "Orders"
+          ]
         }
       },
       "/api/coupons": {
@@ -3119,6 +3263,20 @@ window.onload = function() {
                   }
                 }
               }
+            }
+          },
+          "tags": [
+            "Others"
+          ]
+        }
+      },
+      "/api/others/configurations": {
+        "post": {
+          "operationId": "OthersController_configurations",
+          "parameters": [],
+          "responses": {
+            "201": {
+              "description": ""
             }
           },
           "tags": [
@@ -3465,13 +3623,13 @@ window.onload = function() {
           "properties": {
             "status": {
               "type": "string",
-              "description": "The status of the order",
+              "description": "The status of the order (shipping, cash_delivery, preparing, finished, cancelled)",
               "enum": [
-                "await_payment",
                 "shipping",
                 "cash_delivery",
                 "preparing",
-                "finished"
+                "finished",
+                "cancelled"
               ],
               "example": "shipping"
             }

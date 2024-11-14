@@ -20,6 +20,7 @@ import { PaymentsModule } from './payments/payment.module';
 import { OrdersModule } from './orders/orders.module';
 import { CouponsModule } from './coupons/coupons.module';
 import { OthersModule } from './others/others.module';
+import { ConfigurationsModule } from './configurations/configurations.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { OthersModule } from './others/others.module';
     OrdersModule,
     CouponsModule,
     OthersModule,
+    ConfigurationsModule,
   ],
   controllers: [AppController],
   providers: [
