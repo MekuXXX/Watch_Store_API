@@ -4,7 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { QueriesDto } from 'src/dtos/queries.dto';
 import { DRIZZLE } from 'src/db/db.module';
 import { DrizzleDB } from 'src/db/drizzle';
@@ -15,7 +14,7 @@ import { and, eq } from 'drizzle-orm';
 export class WishlistsService {
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
 
-  async create(userId: string, data: CreateWishlistDto | string) {
+  async create(userId: string, productId: string) {
     const userExists = await this.db
       .select()
       .from(users)
@@ -29,7 +28,7 @@ export class WishlistsService {
     const productExists = await this.db
       .select()
       .from(products)
-      .where(eq(products.id, typeof data === 'string' ? data : data.product_id))
+      .where(eq(products.id, productId))
       .limit(1);
 
     if (!productExists) {
@@ -41,10 +40,9 @@ export class WishlistsService {
         .insert(user_product)
         .values({
           user_id: userId,
-          product_id: typeof data === 'string' ? data : data.product_id,
+          product_id: productId,
         })
         .returning({
-          id: user_product.id,
           user_id: user_product.user_id,
           product_id: user_product.product_id,
         })
@@ -60,7 +58,6 @@ export class WishlistsService {
   async findAll(queriesDto: QueriesDto, userId?: string) {
     const baseQuery = this.db
       .select({
-        id: user_product.id,
         created_at: user_product.created_at,
         updated_at: user_product.updated_at,
         product: {
@@ -106,27 +103,11 @@ export class WishlistsService {
     return { success: true, data: { wishlists } };
   }
 
-  async findOne(wishlistId: string, userId?: string) {
-    const where = [eq(user_product.id, wishlistId)];
-
-    if (userId) {
-      const userExists = await this.db
-        .select()
-        .from(users)
-        .where(eq(users.id, userId))
-        .limit(1);
-
-      if (!userExists) {
-        throw new BadRequestException('User does not exist');
-      }
-
-      where.push(eq(user_product.user_id, userId));
-    }
-
+  async findOne(userId: string, productId: string) {
     const wishlist = await this.db.query.user_product.findFirst({
-      where: (wishlist, { eq }) => eq(wishlist.id, wishlistId),
+      where: (wishlist, { eq, and }) =>
+        and(eq(wishlist.user_id, userId), eq(wishlist.product_id, productId)),
       columns: {
-        id: true,
         created_at: true,
         updated_at: true,
       },
@@ -155,12 +136,6 @@ export class WishlistsService {
       },
     });
 
-    if (userId) {
-      if (wishlist.user.id !== userId) {
-        throw new NotFoundException('Wishlist is not exist');
-      }
-    }
-
     if (!wishlist) {
       throw new NotFoundException('Wishlist is not exist');
     }
@@ -168,20 +143,10 @@ export class WishlistsService {
     return { success: true, data: { wishlist } };
   }
 
-  async remove(wishlistId: string, userId?: string) {
-    if (userId) {
-      const wishlist = await this.db.query.user_product.findFirst({
-        where: (wishlist, { eq, and }) =>
-          and(eq(wishlist.id, wishlistId), eq(wishlist.user_id, userId)),
-      });
-
-      if (!wishlist) {
-        throw new NotFoundException('Wishlist is not exist');
-      }
-    }
-
+  async remove(userId: string, productId: string) {
     const wishlist = await this.db.query.user_product.findFirst({
-      where: (wishlist, { eq }) => eq(wishlist.id, wishlistId),
+      where: (wishlist, { eq, and }) =>
+        and(eq(wishlist.user_id, userId), eq(wishlist.product_id, productId)),
       with: {
         user: {
           columns: {
@@ -208,9 +173,18 @@ export class WishlistsService {
       },
     });
 
+    if (!wishlist) {
+      throw new NotFoundException('Wishlist is not found');
+    }
+
     await this.db
       .delete(user_product)
-      .where(and(eq(user_product.id, wishlistId)))
+      .where(
+        and(
+          eq(user_product.user_id, userId),
+          eq(user_product.product_id, productId),
+        ),
+      )
       .returning();
 
     return { success: true, data: { wishlist } };

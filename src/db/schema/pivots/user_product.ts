@@ -6,7 +6,6 @@ import { products } from '../products';
 export const user_product = pgTable(
   'user_product',
   {
-    id: uuid('id').defaultRandom().notNull(),
     user_id: uuid('user_id').references(() => users.id, {
       onDelete: 'cascade',
     }),

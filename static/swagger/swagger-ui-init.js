@@ -1633,26 +1633,32 @@ window.onload = function() {
       "/api/wishlists/current": {
         "get": {
           "operationId": "WishlistsController_getCurrentUserWishlists",
-          "summary": "Get wishlists of the current user",
+          "summary": "Get current user wishlists",
           "parameters": [
             {
               "name": "page",
-              "required": true,
+              "required": false,
               "in": "query",
+              "description": "Page number",
               "example": 1,
-              "schema": {}
+              "schema": {
+                "type": "number"
+              }
             },
             {
               "name": "limit",
-              "required": true,
+              "required": false,
               "in": "query",
+              "description": "Number of items per page",
               "example": 10,
-              "schema": {}
+              "schema": {
+                "type": "number"
+              }
             }
           ],
           "responses": {
             "200": {
-              "description": "Successfully retrieved wishlists.",
+              "description": "The list of current user wishlists",
               "content": {
                 "application/json": {
                   "schema": {
@@ -1661,17 +1667,23 @@ window.onload = function() {
                       "data": {
                         "wishlists": [
                           {
+                            "created_at": "2024-11-14T00:00:00Z",
+                            "updated_at": "2024-11-14T00:00:00Z",
                             "product": {
-                              "id": "uuid",
-                              "name": "Product A",
-                              "price": 100
+                              "id": "product-id",
+                              "name": "Product 1",
+                              "description": "Description of Product 1",
+                              "image_url": "https://example.com/image.jpg",
+                              "price": 99.99,
+                              "quantity": 10
                             },
                             "user": {
-                              "id": "uuid",
-                              "username": "User A"
-                            },
-                            "created_at": "2024-09-01T00:00:00.000Z",
-                            "updated_at": "2024-09-01T00:00:00.000Z"
+                              "id": "user-id",
+                              "username": "user123",
+                              "email": "user@example.com",
+                              "avatar_url": "https://example.com/avatar.jpg",
+                              "role": "user"
+                            }
                           }
                         ]
                       }
@@ -1680,78 +1692,14 @@ window.onload = function() {
                 }
               }
             },
-            "401": {
-              "description": "User is not authenticated.",
+            "404": {
+              "description": "User not found",
               "content": {
                 "application/json": {
                   "schema": {
                     "example": {
                       "success": false,
-                      "message": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "Wishlists"
-          ]
-        },
-        "post": {
-          "operationId": "WishlistsController_createWishlistForCurrentUser",
-          "summary": "Create a wishlist for the current user",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateWishlistDto"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "Wishlist created successfully.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": true,
-                      "data": {
-                        "wishlist": {
-                          "user_id": "uuid",
-                          "product_id": "uuid"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": "User or product does not exist.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "User/Product does not exist"
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "User is not authenticated.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Unauthorized"
+                      "message": "User not found"
                     }
                   }
                 }
@@ -1766,26 +1714,32 @@ window.onload = function() {
       "/api/wishlists": {
         "get": {
           "operationId": "WishlistsController_getSystemWishlists",
-          "summary": "Get all system wishlists (Admin only)",
+          "summary": "Get all wishlists in the system (Admin only)",
           "parameters": [
             {
               "name": "page",
-              "required": true,
+              "required": false,
               "in": "query",
+              "description": "Page number",
               "example": 1,
-              "schema": {}
+              "schema": {
+                "type": "number"
+              }
             },
             {
               "name": "limit",
-              "required": true,
+              "required": false,
               "in": "query",
+              "description": "Number of items per page",
               "example": 10,
-              "schema": {}
+              "schema": {
+                "type": "number"
+              }
             }
           ],
           "responses": {
             "200": {
-              "description": "Successfully retrieved all system wishlists.",
+              "description": "The list of all wishlists in the system",
               "content": {
                 "application/json": {
                   "schema": {
@@ -1794,46 +1748,21 @@ window.onload = function() {
                       "data": {
                         "wishlists": [
                           {
-                            "id": "52827b32-9182-46c1-a622-d6296fe4500f",
-                            "created_at": "2024-10-14T12:23:34.752Z",
-                            "updated_at": "2024-10-14T12:23:34.752Z",
+                            "created_at": "2024-11-14T00:00:00Z",
+                            "updated_at": "2024-11-14T00:00:00Z",
                             "product": {
-                              "id": "b7d1ac0f-fd98-4a29-aad0-e8afc41a6ea7",
-                              "name": "Bespoke Concrete Chips",
-                              "description": "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                              "image_url": "https://loremflickr.com/640/480?lock=819500450578432",
-                              "price": 33123886.733985655,
-                              "quantity": 44228475
+                              "id": "product-id",
+                              "name": "Product 1",
+                              "description": "Description of Product 1",
+                              "image_url": "https://example.com/image.jpg",
+                              "price": 99.99,
+                              "quantity": 10
                             },
                             "user": {
-                              "id": "b00a29a9-5bf2-4a5b-a08d-d0c915b60395",
-                              "username": "Dan Miller",
-                              "email": "Dagmar57@yahoo.com",
-                              "avatar_url": null,
-                              "cover_url": null,
-                              "phone": null,
-                              "role": "user"
-                            }
-                          },
-                          {
-                            "id": "c37c07e1-ad93-4c70-9a41-4690b8f234aa",
-                            "created_at": "2024-10-14T12:23:34.752Z",
-                            "updated_at": "2024-10-14T12:23:34.752Z",
-                            "product": {
-                              "id": "9a813d27-7682-4d8b-b290-be28b751ff2b",
-                              "name": "Sleek Bronze Salad",
-                              "description": "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                              "image_url": "https://picsum.photos/seed/UVsE6nHQM/640/480",
-                              "price": 88911873.5358168,
-                              "quantity": 79060905
-                            },
-                            "user": {
-                              "id": "b00a29a9-5bf2-4a5b-a08d-d0c915b60395",
-                              "username": "Dan Miller",
-                              "email": "Dagmar57@yahoo.com",
-                              "avatar_url": null,
-                              "cover_url": null,
-                              "phone": null,
+                              "id": "user-id",
+                              "username": "user123",
+                              "email": "user@example.com",
+                              "avatar_url": "https://example.com/avatar.jpg",
                               "role": "user"
                             }
                           }
@@ -1844,21 +1773,8 @@ window.onload = function() {
                 }
               }
             },
-            "401": {
-              "description": "User is not authenticated.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            },
             "403": {
-              "description": "User is not an admin.",
+              "description": "Forbidden: Admin role required",
               "content": {
                 "application/json": {
                   "schema": {
@@ -1879,35 +1795,41 @@ window.onload = function() {
       "/api/wishlists/users/{userId}": {
         "get": {
           "operationId": "WishlistsController_getUserWishlists",
-          "summary": "Get wishlists of a specific user (Admin only)",
+          "summary": "Get specific user wishlists (Admin only)",
           "parameters": [
             {
               "name": "userId",
               "required": true,
               "in": "path",
-              "example": "uuid",
+              "description": "User ID",
               "schema": {
                 "type": "string"
               }
             },
             {
               "name": "page",
-              "required": true,
+              "required": false,
               "in": "query",
+              "description": "Page number",
               "example": 1,
-              "schema": {}
+              "schema": {
+                "type": "number"
+              }
             },
             {
               "name": "limit",
-              "required": true,
+              "required": false,
               "in": "query",
+              "description": "Number of items per page",
               "example": 10,
-              "schema": {}
+              "schema": {
+                "type": "number"
+              }
             }
           ],
           "responses": {
             "200": {
-              "description": "Successfully retrieved all system wishlists.",
+              "description": "The list of wishlists for the specified user",
               "content": {
                 "application/json": {
                   "schema": {
@@ -1916,46 +1838,21 @@ window.onload = function() {
                       "data": {
                         "wishlists": [
                           {
-                            "id": "52827b32-9182-46c1-a622-d6296fe4500f",
-                            "created_at": "2024-10-14T12:23:34.752Z",
-                            "updated_at": "2024-10-14T12:23:34.752Z",
+                            "created_at": "2024-11-14T00:00:00Z",
+                            "updated_at": "2024-11-14T00:00:00Z",
                             "product": {
-                              "id": "b7d1ac0f-fd98-4a29-aad0-e8afc41a6ea7",
-                              "name": "Bespoke Concrete Chips",
-                              "description": "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                              "image_url": "https://loremflickr.com/640/480?lock=819500450578432",
-                              "price": 33123886.733985655,
-                              "quantity": 44228475
+                              "id": "product-id",
+                              "name": "Product 1",
+                              "description": "Description of Product 1",
+                              "image_url": "https://example.com/image.jpg",
+                              "price": 99.99,
+                              "quantity": 10
                             },
                             "user": {
-                              "id": "b00a29a9-5bf2-4a5b-a08d-d0c915b60395",
-                              "username": "Dan Miller",
-                              "email": "Dagmar57@yahoo.com",
-                              "avatar_url": null,
-                              "cover_url": null,
-                              "phone": null,
-                              "role": "user"
-                            }
-                          },
-                          {
-                            "id": "c37c07e1-ad93-4c70-9a41-4690b8f234aa",
-                            "created_at": "2024-10-14T12:23:34.752Z",
-                            "updated_at": "2024-10-14T12:23:34.752Z",
-                            "product": {
-                              "id": "9a813d27-7682-4d8b-b290-be28b751ff2b",
-                              "name": "Sleek Bronze Salad",
-                              "description": "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                              "image_url": "https://picsum.photos/seed/UVsE6nHQM/640/480",
-                              "price": 88911873.5358168,
-                              "quantity": 79060905
-                            },
-                            "user": {
-                              "id": "b00a29a9-5bf2-4a5b-a08d-d0c915b60395",
-                              "username": "Dan Miller",
-                              "email": "Dagmar57@yahoo.com",
-                              "avatar_url": null,
-                              "cover_url": null,
-                              "phone": null,
+                              "id": "user-id",
+                              "username": "user123",
+                              "email": "user@example.com",
+                              "avatar_url": "https://example.com/avatar.jpg",
                               "role": "user"
                             }
                           }
@@ -1966,21 +1863,8 @@ window.onload = function() {
                 }
               }
             },
-            "401": {
-              "description": "User is not authenticated.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            },
             "403": {
-              "description": "User is not an admin.",
+              "description": "Forbidden: Admin role required",
               "content": {
                 "application/json": {
                   "schema": {
@@ -1998,321 +1882,24 @@ window.onload = function() {
           ]
         }
       },
-      "/api/wishlists/current/{wishlistId}": {
+      "/api/wishlists/current/{productId}": {
         "get": {
           "operationId": "WishlistsController_getCurrentUserWishlist",
-          "summary": "Get a specific wishlist of the current user",
+          "summary": "Get current user wishlist for a specific product",
           "parameters": [
-            {
-              "name": "wishlistId",
-              "required": true,
-              "in": "path",
-              "example": "uuid",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successfully retrieved wishlist.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": true,
-                      "data": {
-                        "user": {
-                          "id": "uuid",
-                          "username": "User A"
-                        },
-                        "product": {
-                          "id": "uuid",
-                          "name": "Product A"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "User is not authenticated.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            },
-            "404": {
-              "description": "Wishlist not found.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Wishlist is not exist"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "Wishlists"
-          ]
-        },
-        "delete": {
-          "operationId": "WishlistsController_deleteCurrentUserWishlist",
-          "summary": "Delete a wishlist for the current user",
-          "parameters": [
-            {
-              "name": "wishlistId",
-              "required": true,
-              "in": "path",
-              "example": "uuid",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Wishlist deleted successfully.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": true,
-                      "data": {
-                        "wishlist": {}
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "User is not authenticated.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            },
-            "404": {
-              "description": "Wishlist not found.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Wishlist is not exist"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "Wishlists"
-          ]
-        }
-      },
-      "/api/wishlists/{wishlistId}": {
-        "get": {
-          "operationId": "WishlistsController_getUserWishlist",
-          "summary": "Get a specific wishlist (Admin only)",
-          "parameters": [
-            {
-              "name": "wishlistId",
-              "required": true,
-              "in": "path",
-              "example": "uuid",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successfully retrieved wishlist.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": true,
-                      "data": {
-                        "user": {
-                          "id": "uuid",
-                          "username": "User A"
-                        },
-                        "product": {
-                          "id": "uuid",
-                          "name": "Product A"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "User is not authenticated.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            },
-            "403": {
-              "description": "User is not an admin.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Forbidden"
-                    }
-                  }
-                }
-              }
-            },
-            "404": {
-              "description": "Wishlist not found.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Wishlist is not exist"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "Wishlists"
-          ]
-        },
-        "delete": {
-          "operationId": "WishlistsController_deleteUserWishlist",
-          "summary": "Delete a wishlist (Admin only)",
-          "parameters": [
-            {
-              "name": "wishlistId",
-              "required": true,
-              "in": "path",
-              "example": "uuid",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Wishlist deleted successfully.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": true,
-                      "data": {
-                        "wishlist": {}
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "User is not authenticated.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            },
-            "403": {
-              "description": "User is not an admin.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Forbidden"
-                    }
-                  }
-                }
-              }
-            },
-            "404": {
-              "description": "Wishlist not found.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "example": {
-                      "success": false,
-                      "message": "Wishlist is not exist"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "Wishlists"
-          ]
-        }
-      },
-      "/api/wishlists/{userId}": {
-        "post": {
-          "operationId": "WishlistsController_createWishlistForUser",
-          "summary": "Create a wishlist for a specific user (Admin only)",
-          "parameters": [
-            {
-              "name": "userId",
-              "required": true,
-              "in": "path",
-              "example": "afc81383-2f9f-4af9-906e-e8cd09c1d96e",
-              "schema": {
-                "type": "string"
-              }
-            },
             {
               "name": "productId",
               "required": true,
-              "in": "query",
-              "example": "afc81383-2f9f-4af9-906e-e8cd09c1d96e",
+              "in": "path",
+              "description": "Product ID",
               "schema": {
                 "type": "string"
               }
             }
           ],
           "responses": {
-            "201": {
-              "description": "Wishlist created successfully.",
+            "200": {
+              "description": "The wishlist entry for the specified product",
               "content": {
                 "application/json": {
                   "schema": {
@@ -2320,8 +1907,23 @@ window.onload = function() {
                       "success": true,
                       "data": {
                         "wishlist": {
-                          "user_id": "uuid",
-                          "product_id": "uuid"
+                          "created_at": "2024-11-14T00:00:00Z",
+                          "updated_at": "2024-11-14T00:00:00Z",
+                          "product": {
+                            "id": "product-id",
+                            "name": "Product 1",
+                            "description": "Description of Product 1",
+                            "image_url": "https://example.com/image.jpg",
+                            "price": 99.99,
+                            "quantity": 10
+                          },
+                          "user": {
+                            "id": "user-id",
+                            "username": "user123",
+                            "email": "user@example.com",
+                            "avatar_url": "https://example.com/avatar.jpg",
+                            "role": "user"
+                          }
                         }
                       }
                     }
@@ -2329,34 +1931,347 @@ window.onload = function() {
                 }
               }
             },
-            "400": {
-              "description": "User or product does not exist.",
+            "404": {
+              "description": "Wishlist entry not found",
               "content": {
                 "application/json": {
                   "schema": {
                     "example": {
                       "success": false,
-                      "message": "User/Product does not exist"
+                      "message": "Wishlist is not found"
                     }
                   }
                 }
               }
-            },
-            "401": {
-              "description": "User is not authenticated.",
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        },
+        "post": {
+          "operationId": "WishlistsController_addProductToCurrentUserWishlist",
+          "summary": "Create wishlist for current user",
+          "parameters": [
+            {
+              "name": "productId",
+              "required": true,
+              "in": "path",
+              "description": "Product ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "description": "Request body to create a wishlist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Object"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Wishlist created successfully",
               "content": {
                 "application/json": {
                   "schema": {
                     "example": {
-                      "success": false,
-                      "message": "Unauthorized"
+                      "success": true,
+                      "data": {
+                        "created_at": "2024-11-14T00:00:00Z",
+                        "updated_at": "2024-11-14T00:00:00Z",
+                        "product": {
+                          "id": "product-id",
+                          "name": "Product 1",
+                          "description": "Description of Product 1",
+                          "image_url": "https://example.com/image.jpg",
+                          "price": 99.99,
+                          "quantity": 10
+                        },
+                        "user": {
+                          "id": "user-id",
+                          "username": "user123",
+                          "email": "user@example.com",
+                          "avatar_url": "https://example.com/avatar.jpg",
+                          "role": "user"
+                        }
+                      }
                     }
                   }
                 }
               }
             },
             "403": {
-              "description": "User is not an admin.",
+              "description": "Forbidden: Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Product not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Product not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        },
+        "delete": {
+          "operationId": "WishlistsController_removeProductFromCurrentUserWishlist",
+          "summary": "Remove product from current user wishlist",
+          "parameters": [
+            {
+              "name": "productId",
+              "required": true,
+              "in": "path",
+              "description": "Product ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Wishlist removed successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Product removed from wishlist"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Wishlist entry not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Wishlist entry not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        }
+      },
+      "/api/wishlists/{userId}/{productId}": {
+        "get": {
+          "operationId": "WishlistsController_getUserWishlist",
+          "summary": "Get a specific user wishlist for a specific product (Admin only)",
+          "parameters": [
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "description": "User ID",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "productId",
+              "required": true,
+              "in": "path",
+              "description": "Product ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The wishlist entry for the specified product and user",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "wishlist": {
+                          "created_at": "2024-11-14T00:00:00Z",
+                          "updated_at": "2024-11-14T00:00:00Z",
+                          "product": {
+                            "id": "product-id",
+                            "name": "Product 1",
+                            "description": "Description of Product 1",
+                            "image_url": "https://example.com/image.jpg",
+                            "price": 99.99,
+                            "quantity": 10
+                          },
+                          "user": {
+                            "id": "user-id",
+                            "username": "user123",
+                            "email": "user@example.com",
+                            "avatar_url": "https://example.com/avatar.jpg",
+                            "role": "user"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden: Admin role required",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        },
+        "post": {
+          "operationId": "WishlistsController_addProductToUserWishlist",
+          "summary": "Create wishlist for a specific user (Admin only)",
+          "parameters": [
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "description": "User ID",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "productId",
+              "required": true,
+              "in": "path",
+              "description": "Product ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Wishlist created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "data": {
+                        "created_at": "2024-11-14T00:00:00Z",
+                        "updated_at": "2024-11-14T00:00:00Z",
+                        "product": {
+                          "id": "product-id",
+                          "name": "Product 1",
+                          "description": "Description of Product 1",
+                          "image_url": "https://example.com/image.jpg",
+                          "price": 99.99,
+                          "quantity": 10
+                        },
+                        "user": {
+                          "id": "user-id",
+                          "username": "user123",
+                          "email": "user@example.com",
+                          "avatar_url": "https://example.com/avatar.jpg",
+                          "role": "user"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden: Admin role required",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Wishlists"
+          ]
+        },
+        "delete": {
+          "operationId": "WishlistsController_removeProductFromUserWishlist",
+          "summary": "Remove product from specific user wishlist (Admin only)",
+          "parameters": [
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "description": "User ID",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "productId",
+              "required": true,
+              "in": "path",
+              "description": "Product ID",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Wishlist entry removed successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Product removed from wishlist"
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden: Admin role required",
               "content": {
                 "application/json": {
                   "schema": {
@@ -3270,17 +3185,346 @@ window.onload = function() {
           ]
         }
       },
-      "/api/others/configurations": {
+      "/api/configurations": {
         "post": {
-          "operationId": "OthersController_configurations",
+          "operationId": "ConfigurationsController_create",
+          "summary": "Create a new configuration",
+          "description": "Create a configuration entry. Only admins can access this route.",
           "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateConfigurationDto"
+                },
+                "examples": {
+                  "example": {
+                    "summary": "Example create configuration request",
+                    "value": {
+                      "key": "tax_rate",
+                      "value": "15%",
+                      "description": "Tax rate for orders"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "responses": {
-            "201": {
-              "description": ""
+            "200": {
+              "description": "Configuration created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Configuration created successfully",
+                      "data": {
+                        "configuration": {
+                          "id": "1234",
+                          "key": "tax_rate",
+                          "value": "15%"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden: Only admins can access this route",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
             }
           },
           "tags": [
-            "Others"
+            "Configurations"
+          ]
+        },
+        "get": {
+          "operationId": "ConfigurationsController_findAll",
+          "summary": "Get all configurations",
+          "description": "Retrieve a list of all configurations. Only admins can access this route.",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "All configurations retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": [
+                      {
+                        "id": "1234",
+                        "key": "tax_rate",
+                        "value": "15%"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden: Only admins can access this route",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Configurations"
+          ]
+        }
+      },
+      "/api/configurations/{key}": {
+        "get": {
+          "operationId": "ConfigurationsController_findOne",
+          "summary": "Get a configuration by key",
+          "description": "Retrieve a specific configuration by its key. Only admins can access this route.",
+          "parameters": [
+            {
+              "name": "key",
+              "required": true,
+              "in": "path",
+              "description": "The key of the configuration to retrieve",
+              "example": "tax_rate",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Configuration retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Configuration has gotten successfully",
+                      "data": {
+                        "configuration": {
+                          "id": "1234",
+                          "key": "tax_rate",
+                          "value": "15%"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden: Only admins can access this route",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Configuration key is not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Configuration key is not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Configurations"
+          ]
+        },
+        "patch": {
+          "operationId": "ConfigurationsController_update",
+          "summary": "Update a configuration by key",
+          "description": "Update a configuration entry by key. Only admins can access this route.",
+          "parameters": [
+            {
+              "name": "key",
+              "required": true,
+              "in": "path",
+              "description": "The key of the configuration to update",
+              "example": "tax_rate",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateConfigurationDto"
+                },
+                "examples": {
+                  "example": {
+                    "summary": "Example update configuration request",
+                    "value": {
+                      "value": "18%"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Configuration updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Configuration updated successfully",
+                      "data": {
+                        "configuration": {
+                          "id": "1234",
+                          "key": "tax_rate",
+                          "value": "18%"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Must provide data for update configuration",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Must provide data for update configuration"
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden: Only admins can access this route",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Configuration key is not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Configuration key is not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Configurations"
+          ]
+        },
+        "delete": {
+          "operationId": "ConfigurationsController_remove",
+          "summary": "Delete a configuration by key",
+          "description": "Delete a specific configuration entry by its key. Only admins can access this route.",
+          "parameters": [
+            {
+              "name": "key",
+              "required": true,
+              "in": "path",
+              "description": "The key of the configuration to delete",
+              "example": "tax_rate",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Configuration deleted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": true,
+                      "message": "Configuration deleted successfully",
+                      "data": {
+                        "configuration": {
+                          "id": "1234",
+                          "key": "tax_rate",
+                          "value": "15%"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden: Only admins can access this route",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Forbidden"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Configuration key is not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "example": {
+                      "success": false,
+                      "message": "Configuration key is not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Configurations"
           ]
         }
       }
@@ -3578,21 +3822,9 @@ window.onload = function() {
             }
           }
         },
-        "CreateWishlistDto": {
+        "Object": {
           "type": "object",
-          "properties": {
-            "user_id": {
-              "type": "string",
-              "example": "123e4567-e89b-12d3-a456-426614174000"
-            },
-            "product_id": {
-              "type": "string",
-              "example": "562e4567-e89b-12d3-a456-897927957937"
-            }
-          },
-          "required": [
-            "product_id"
-          ]
+          "properties": {}
         },
         "CreatePaymentOrderDto": {
           "type": "object",
@@ -3639,6 +3871,14 @@ window.onload = function() {
           ]
         },
         "CreateCouponDto": {
+          "type": "object",
+          "properties": {}
+        },
+        "CreateConfigurationDto": {
+          "type": "object",
+          "properties": {}
+        },
+        "UpdateConfigurationDto": {
           "type": "object",
           "properties": {}
         }
