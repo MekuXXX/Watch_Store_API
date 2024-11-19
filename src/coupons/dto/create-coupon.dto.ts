@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsEnum,
@@ -6,6 +7,10 @@ import {
   IsUUID,
   IsDate,
   IsNumber,
+  ValidateNested,
+  IsArray,
+  IsPositive,
+  ArrayNotEmpty,
 } from 'class-validator';
 import { COUPON_TYPE } from 'src/db/schema';
 
@@ -16,7 +21,7 @@ export class CreateCouponDto {
   @IsEnum(COUPON_TYPE.enumValues)
   type: 'value' | 'percentage';
 
-  @IsNumber()
+  @IsPositive()
   value: number;
 
   @IsBoolean()
@@ -25,7 +30,8 @@ export class CreateCouponDto {
   @IsDate()
   expiration_date: Date;
 
-  @IsUUID()
+  @IsArray()
+  @IsUUID('all', { each: true })
   @IsOptional()
-  product_id?: string;
+  products_id?: string[];
 }

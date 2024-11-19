@@ -3141,6 +3141,89 @@ window.onload = function() {
               "description": ""
             }
           }
+        },
+        "get": {
+          "operationId": "CouponsController_findAll",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/api/coupons/{id}": {
+        "get": {
+          "operationId": "CouponsController_findOne",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "type",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        },
+        "patch": {
+          "operationId": "CouponsController_update",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCouponDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        },
+        "delete": {
+          "operationId": "CouponsController_remove",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
         }
       },
       "/api/others/numbers": {
@@ -3871,6 +3954,10 @@ window.onload = function() {
           ]
         },
         "CreateCouponDto": {
+          "type": "object",
+          "properties": {}
+        },
+        "UpdateCouponDto": {
           "type": "object",
           "properties": {}
         },

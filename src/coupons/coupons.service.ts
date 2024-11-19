@@ -1,17 +1,31 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCouponDto } from './dto/create-coupon.dto';
 import { UpdateCouponDto } from './dto/update-coupon.dto';
 import { Coupon, coupon_product, coupons } from 'src/db/schema';
 import { DrizzleDB } from 'src/db/drizzle';
 import { DRIZZLE } from 'src/db/db.module';
-import { eq, ne } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
+import { QueriesDto } from 'src/dtos/queries.dto';
+import { objectsToArray } from 'src/utils/objects-utils';
 
 @Injectable()
 export class CouponsService {
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
 
   async create(createCouponDto: CreateCouponDto) {
-    const { product_id } = createCouponDto;
+    const { products_id, type, value } = createCouponDto;
+
+    if (type === 'percentage' && value > 100) {
+      throw new BadRequestException(
+        'Value must be less than or equal 100 if the type is percentage',
+      );
+    }
 
     const newCoupon = (
       await this.db
@@ -20,73 +34,160 @@ export class CouponsService {
         .returning()
     )[0];
 
-    if (product_id) {
+    if (products_id && products_id.length) {
       try {
-        await this.db.insert(coupon_product).values({
-          coupon_id: newCoupon.id,
-          product_id,
-        });
+        const couponProducts = [];
+        for (const product_id of products_id) {
+          couponProducts.push({
+            coupon_id: newCoupon.id,
+            product_id,
+          });
+        }
+        await this.db.insert(coupon_product).values(couponProducts);
       } catch (error) {
         await this.db.delete(coupons).where(eq(coupons.id, newCoupon.id));
-        throw new NotFoundException('Product is not exist');
+        throw new NotFoundException('One of the products is not exist');
       }
     }
 
     return newCoupon;
   }
 
-  // Get all coupons
-  // async findAll() {
-  //   return await this.db.select(coupons).all();
-  // }
+  async findAll(queriesDto: QueriesDto) {
+    let coupons = await this.db.query.coupons.findMany({
+      limit: queriesDto.limit,
+      offset: queriesDto.limit * (queriesDto.page - 1),
+      with: {
+        products: { columns: { product_id: true } },
+      },
+    });
 
-  // // Get a single coupon by id
-  // async findOne(id: string) {
-  //   return await this.db.select(coupons).where({ id }).first();
-  // }
+    const newCoupons = coupons.map((coupon) => ({
+      ...coupon,
+      products: objectsToArray(coupon.products, ['product_id'])[0],
+    }));
 
-  // // Update an existing coupon
-  // async update(id: string, updateCouponDto: UpdateCouponDto) {
-  //   const { coupon, type, value, is_active, expiration_date, product_id } =
-  //     updateCouponDto;
+    return {
+      success: true,
+      message: 'Coupons have gotten successfully',
+      data: { coupons: newCoupons },
+    };
+  }
 
-  //   const updatedCoupon = await this.db
-  //     .update(coupons)
-  //     .set({
-  //       coupon,
-  //       type,
-  //       value,
-  //       is_active,
-  //       expiration_date,
-  //       updated_at: new Date(),
-  //       product_id,
-  //     })
-  //     .where({ id })
-  //     .returning();
+  async findOne(value: string, type: 'coupon' | 'id') {
+    let coupon = await this.db.query.coupons.findFirst({
+      where: (coupon, { eq }) =>
+        eq(type === 'id' ? coupons.id : coupons.coupon, value),
+      with: { products: { columns: { product_id: true } } },
+    });
 
-  //   // Update the relationship in the pivot table if the product_id is updated
-  //   if (product_id) {
-  //     await this.db
-  //       .insert(coupon_product)
-  //       .values({
-  //         coupon_id: updatedCoupon.id,
-  //         product_id,
-  //       })
-  //       .onConflict('coupon_id', 'product_id')
-  //       .doNothing();
-  //   }
+    if (!coupon) {
+      throw new NotFoundException('Coupon is not exist');
+    }
 
-  //   return updatedCoupon;
-  // }
+    const newCoupon = {
+      ...coupon,
+      products: objectsToArray(coupon.products, ['product_id'])[0],
+    };
 
-  // // Remove a coupon
-  // async remove(id: string) {
-  //   // First, remove the relationship from the coupon_product pivot table
-  //   await this.db.delete(coupon_product).where({ coupon_id: id });
+    return {
+      success: true,
+      message: 'Coupon have gotten successfully',
+      data: { coupon: newCoupon },
+    };
+  }
 
-  //   // Then, remove the coupon itself
-  //   await this.db.delete(coupons).where({ id });
+  async update(id: string, updateCouponDto: UpdateCouponDto) {
+    const { coupon, type, value, is_active, expiration_date, products_id } =
+      updateCouponDto;
 
-  //   return { message: `Coupon with ID ${id} removed successfully` };
-  // }
+    const isCouponExist = await this.db.query.coupons.findFirst({
+      where: (dbCoupon, { eq }) => eq(dbCoupon.coupon, coupon),
+    });
+
+    if (isCouponExist) {
+      throw new BadRequestException('Coupon is already exist');
+    }
+
+    const dbCoupon = await this.db.query.coupons.findFirst({
+      where: (coupon, { eq }) => eq(coupon.id, id),
+      with: {
+        products: true,
+      },
+    });
+
+    if (!dbCoupon) {
+      throw new NotFoundException('Coupon is not exist');
+    }
+
+    const updatedCoupon = await this.db
+      .update(coupons)
+      .set({
+        coupon,
+        type,
+        value,
+        is_active,
+        expiration_date,
+        updated_at: new Date(),
+      } as Coupon)
+      .where(eq(coupons.id, id))
+      .returning();
+
+    if (products_id.length !== 0) {
+      try {
+        await this.db
+          .delete(coupon_product)
+          .where(eq(coupon_product.coupon_id, id));
+
+        const couponProducts = [];
+        for (const product of products_id) {
+          couponProducts.push({ coupon_id: id, product_id: product });
+        }
+        await this.db.insert(coupon_product).values(couponProducts);
+      } catch {
+        const { products, ...oldCouponData } = dbCoupon;
+        await this.db.insert(coupon_product).values(dbCoupon.products);
+        await this.db
+          .update(coupons)
+          .set(oldCouponData)
+          .where(eq(coupons.id, id));
+        throw new NotFoundException('One of the products is not exist');
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Coupon updated successfully',
+      data: { coupon: updatedCoupon },
+    };
+  }
+
+  async remove(id: string) {
+    let coupon = await this.db.query.coupons.findFirst({
+      where: (coupon, { eq }) => eq(coupon.id, id),
+      with: {
+        products: {
+          columns: {
+            product_id: true,
+          },
+        },
+      },
+    });
+
+    if (!coupon) {
+      throw new NotFoundException('Coupon is not exist');
+    }
+
+    await this.db.delete(coupons).where(eq(coupons.id, coupon.id));
+    const newCoupon = {
+      ...coupon,
+      products: objectsToArray(coupon.products, ['product_id']),
+    };
+
+    return {
+      success: true,
+      message: `Coupon with ID ${id} removed successfully`,
+      data: { coupon: newCoupon },
+    };
+  }
 }

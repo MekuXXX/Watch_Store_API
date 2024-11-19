@@ -4,8 +4,12 @@ import { products } from '../products';
 import { relations } from 'drizzle-orm';
 
 export const coupon_product = pgTable('coupon_product', {
-  coupon_id: uuid('coupon_id').references(() => coupons.id),
-  product_id: uuid('product_id').references(() => products.id),
+  coupon_id: uuid('coupon_id').references(() => coupons.id, {
+    onDelete: 'cascade',
+  }),
+  product_id: uuid('product_id').references(() => products.id, {
+    onDelete: 'cascade',
+  }),
 });
 
 export const coupon_products_rel = relations(
